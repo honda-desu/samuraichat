@@ -1,7 +1,7 @@
 package com.example.samuraichat.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +20,10 @@ public class AdminChatGroupController {
 	}
 	
 	@GetMapping
-	public String index(Model model) {
-		List<ChatGroup> chatGroups = chatGroupService.findAllChatGroups();
+	public String index(Pageable pageable, Model model) {
+		Page<ChatGroup> chatGroupPage = chatGroupService.findAllChatGroups(pageable);
 		
-		model.addAttribute("chatGroups", chatGroups);
+		model.addAttribute("chatGroupPage", chatGroupPage);
 		
 		return "admin/chatGroups/index";
 	}
