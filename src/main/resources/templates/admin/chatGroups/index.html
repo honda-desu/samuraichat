@@ -43,7 +43,7 @@
                                     <ul class="pagination">
                                         <li class="page-item">
                                             <span th:if="${chatGroupPage.isFirst()}" class="page-link disabled">前</span>
-                                            <a th:unless="${chatGroupPage.isFirst()}" th:href="@{/admin/chatGroup(page = ${chatGroupPage.getNumber() - 1})}" class="page-link samuraichat-page-link">前</a>
+                                            <a th:unless="${chatGroupPage.isFirst()}" th:href="@{/admin/chatGroups(page = ${chatGroupPage.getNumber() - 1})}" class="page-link samuraichat-page-link">前</a>
                                         </li>
                                         <li th:each="i : ${#numbers.sequence(0, chatGroupPage.getTotalPages() - 1)}" class="page-item">
                                             <span th:if="${i == chatGroupPage.getNumber()}" class="page-link active samuraichat-active" th:text="${i + 1}"></span>
