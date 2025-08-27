@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Samurai Chat</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			height: 100vh;
+		}
+
+		.chat-container {
+			flex: 1;
+			overflow-y: auto;
+			padding: 20px;
+		}
+
+		.message {
+			margin-bottom: 15px;
+			padding: 10px;
+			border-bottom: 1px solid #ccc;
+		}
+
+		.message .meta {
+			font-size: 0.9em;
+			color: #666;
+		}
+
+		.input-form {
+			padding: 15px;
+			border-top: 1px solid #ccc;
+			background: #f9f9f9;
+		}
+
+		.input-form input[type="text"] {
+			width: 70%;
+			padding: 8px;
+			margin-right: 10px;
+		}
+
+		.input-form button {
+			padding: 8px 16px;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- メッセージ履歴表示 -->
+	<div class="chat-container">
+		<div th:each="msg : ${messages}" class="message">
+			<div>
+				<strong th:text="${msg.user != null ? msg.user.name : '匿名'}">ユーザー名</strong>
+			</div>
+			<div th:text="${msg.content}">メッセージ内容</div>
+			<div class="meta" th:text="${#dates.format(msg.createdAt, 'yyyy-MM-dd HH:mm')}">送信日時</div>
+		</div>
+	</div>
+
+	<!-- メッセージ入力フォーム -->
+	<form class="input-form" th:action="@{/messages/send}" method="post">
+		<input type="text" name="content" placeholder="メッセージを入力..." required />
+		<button type="submit">送信</button>
+	</form>
+</body>
+
+</html>

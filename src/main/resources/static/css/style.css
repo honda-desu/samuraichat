@@ -51,8 +51,21 @@ footer {
   opacity: 0.8;
 }
 
-.samuraitravel-dropdown-item:active {
+.samuraichat-dropdown-item:active {
   background-color: #5196a6;
+}
+
+.samuraichat-page-link {
+  color: #5196a6;
+}
+
+.samuraichat-page-link:hover {
+  color: #407784;
+}
+
+.samuraichat-active {
+  background-color: #5196a6 !important;
+  border-color: #5196a6 !important;
 }
 
 @media screen and (min-width: 1400px) {
