@@ -51,7 +51,7 @@ INSERT IGNORE INTO chat_groups (id, name) VALUES
 (30, '観光統計データ共有');
 
 /* messagesテーブル */
-INSERT INTO messages (user_id, content, created_at) VALUES
+INSERT IGNORE INTO messages (user_id, content, created_at) VALUES
 (1, '今週末、箱根に行こうと思ってます！おすすめありますか？', '2025-08-24 09:15:00'),
 (2, '広島駅周辺でおすすめのカフェありますか？', '2025-08-24 10:30:00'),
 (3, '次回のハイキングは高尾山にしませんか？', '2025-08-24 11:45:00'),
