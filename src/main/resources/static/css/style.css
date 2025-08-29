@@ -1,75 +1,112 @@
 html {
- font-size: 14px;
+	font-size: 14px;
 }
 
 body {
- font-family: 'Noto Sans JP', sans-serif;
+	font-family: 'Noto Sans JP', sans-serif;
 }
 
 h1 {
-  font-size: 1.5rem;
+	font-size: 1.5rem;
 }
 
 a {
- color: #5196a6;
- text-decoration: none !important;
+	color: #5196a6;
+	text-decoration: none !important;
 }
 
 a:hover {
- color: #407784;
+	color: #407784;
 }
 
 footer {
- width: 100%;
- height: 60px;
- position: absolute;
- bottom: 0;
- background-color: #f2f0eb;
+	width: 100%;
+	height: 60px;
+	position: absolute;
+	bottom: 0;
+	background-color: #f2f0eb;
 }
 
 .samuraichat-wrapper {
- min-height: 100vh;
- position: relative;
- padding-bottom: 60px;
- box-sizing: border-box;
+	min-height: 100vh;
+	position: relative;
+	padding-bottom: 60px;
+	box-sizing: border-box;
+	
 }
 
 .samuraichat-navbar {
- min-height: 60px;
+	min-height: 60px;
 }
 
 .samuraichat-logo {
- height: 40px;
+	height: 40px;
 }
 
 .samuraichat-btn {
-  background-color: #5196a6 !important;
-  transition: 0.1s;
+	background-color: #5196a6 !important;
+	transition: 0.1s;
 }
 
 .samuraichat-btn:hover {
-  opacity: 0.8;
+	opacity: 0.8;
 }
 
 .samuraichat-dropdown-item:active {
-  background-color: #5196a6;
+	background-color: #5196a6;
 }
 
 .samuraichat-page-link {
-  color: #5196a6;
+	color: #5196a6;
 }
 
 .samuraichat-page-link:hover {
-  color: #407784;
+	color: #407784;
 }
 
 .samuraichat-active {
-  background-color: #5196a6 !important;
-  border-color: #5196a6 !important;
+	background-color: #5196a6 !important;
+	border-color: #5196a6 !important;
+}
+
+.chat-container {
+	flex: 1;
+	overflow-y: auto;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 200px);
+}
+
+.message {
+	margin-bottom: 15px;
+	padding: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.message .meta {
+	font-size: 0.9em;
+	color: #666;
+}
+
+.input-form {
+	padding: 15px;
+	border-top: 1px solid #ccc;
+	background: #f9f9f9;
+}
+
+.input-form input[type="text"] {
+	width: 70%;
+	padding: 8px;
+	margin-right: 10px;
+}
+
+.input-form button {
+	padding: 8px 16px;
 }
 
 @media screen and (min-width: 1400px) {
- .samuraichat-container {
-   max-width: 1200px;
- }
+	.samuraichat-container {
+		max-width: 1200px;
+	}
 }
