@@ -1,6 +1,6 @@
 package com.example.samuraichat.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,25 +13,23 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "messages")
+@Table(name = "chat_group_members")
 @Data
-public class Message { 
+public class ChatGroupMember {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Integer id;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
-	
-	@ManyToOne
 	@JoinColumn(name = "chat_group_id")
 	private ChatGroup chatGroup;
 	
-	@Column(name = "content")
-	private String content;
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 	
-	@Column(name = "created_at", insertable = false, updatable = false)
-	private Timestamp createdAt;
+	@Column(name = "joined_at")
+	private LocalDateTime joinedAt;
+
 }

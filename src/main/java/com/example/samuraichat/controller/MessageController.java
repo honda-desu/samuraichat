@@ -6,25 +6,28 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.samuraichat.entity.ChatGroup;
 import com.example.samuraichat.entity.Message;
 import com.example.samuraichat.entity.User;
 import com.example.samuraichat.security.UserDetailsImpl;
+import com.example.samuraichat.service.ChatGroupService;
 import com.example.samuraichat.service.MessageService;
 
 @Controller
-@RequestMapping("/messages")
 public class MessageController {
 	private final MessageService messageService;
+	private final ChatGroupService chatGroupService;
 	
-	public MessageController(MessageService messageService) {
+	public MessageController(MessageService messageService, ChatGroupService chatGroupService) {
 		this.messageService = messageService;
+		this.chatGroupService = chatGroupService;
 	}
 	
-	@GetMapping
+	@GetMapping("/messages")
 	public String showAllMessages(Model model) {
 		List<Message> messages = messageService.findAllMessages();
 		
@@ -33,14 +36,33 @@ public class MessageController {
 		return "message/index";
 	}
 	
-	@PostMapping("/send")
-	public String sendMessage(@RequestParam("content") String content,
+	@PostMapping("/groups/{groupId}/messages/send")
+	public String sendMessage(@PathVariable("groupId") Integer groupId,
+	                          @RequestParam("content") String content,
 	                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
-		
+
 	    User user = userDetails.getUser();
-	    
-	    messageService.saveMessage(content, user);
-	    
-	    return "redirect:/messages";
+
+	    // グループIDに紐づくGroupエンティティを取得（存在チェック含む）
+	    ChatGroup group = chatGroupService.findById(groupId)
+	        .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
+
+	    // メッセージ保存（グループとユーザーを紐づけて）
+	    messageService.saveMessage(content, user, group);
+
+	    // グループのメッセージ一覧にリダイレクト
+	    return "redirect:/groups/" + groupId + "/messages";
 	}
+
+	
+	@GetMapping("/groups/{groupId}/messages")
+	public String showMessages(@PathVariable Integer groupId, Model model) {
+		List<Message> messages = messageService.getMessagesByGroupId(groupId);
+		
+		model.addAttribute("messages", messages);
+		model.addAttribute("groupId", groupId);
+		
+		return "message/list";
+	}
+
 }

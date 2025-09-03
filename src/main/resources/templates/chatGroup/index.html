@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+
+	<div th:replace="~{fragment :: styles}"></div>
+
+	<title>チャットグループ一覧</title>
+</head>
+
+<body>
+	<div class="samuraichat-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container pt-4 pb-5 samuraichat-container">
+				<div class="row justify-content-center">
+					<div class="col-xxl-9 col-xl-10 col-lg-11">
+
+						<h1 class="mb-4 text-center">チャットグループ一覧</h1>
+
+
+
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col">ID</th>
+									<th scope="col">チャットグループ名</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="chatGroup : ${chatGroupPage}">
+									<td th:text="${chatGroup.id}"></td>
+									<td>
+										<a th:href="@{/groups/{groupId}/messages(groupId=${chatGroup.id})}"
+											th:text="${chatGroup.name}"></a>
+									</td>
+								</tr>
+							</tbody>
+
+						</table>
+
+						<!-- ページネーション -->
+						<div th:if="${chatGroupPage.getTotalPages() > 1}" class="d-flex justify-content-center">
+							<nav aria-label="チャットグループ一覧ページ">
+								<ul class="pagination">
+									<li class="page-item">
+										<span th:if="${chatGroupPage.isFirst()}" class="page-link disabled">前</span>
+										<a th:unless="${chatGroupPage.isFirst()}"
+											th:href="@{/admin/chatGroups(page = ${chatGroupPage.getNumber() - 1})}"
+											class="page-link samuraichat-page-link">前</a>
+									</li>
+									<li th:each="i : ${#numbers.sequence(0, chatGroupPage.getTotalPages() - 1)}"
+										class="page-item">
+										<span th:if="${i == chatGroupPage.getNumber()}"
+											class="page-link active samuraichat-active" th:text="${i + 1}"></span>
+										<a th:unless="${i == chatGroupPage.getNumber()}"
+											th:href="@{/admin/chatGroups(page = ${i})}"
+											class="page-link samuraichat-page-link" th:text="${i + 1}"></a>
+									</li>
+									<li class="page-item">
+										<span th:if="${chatGroupPage.isLast()}" class="page-link disabled">次</span>
+										<a th:unless="${chatGroupPage.isLast()}"
+											th:href="@{/admin/chatGroups(page = ${chatGroupPage.getNumber() + 1})}"
+											class="page-link samuraichat-page-link">次</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

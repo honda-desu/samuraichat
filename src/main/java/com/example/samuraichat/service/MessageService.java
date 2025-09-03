@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.samuraichat.entity.ChatGroup;
 import com.example.samuraichat.entity.Message;
 import com.example.samuraichat.entity.User;
 import com.example.samuraichat.repository.MessageRepository;
@@ -14,19 +15,26 @@ public class MessageService {
 	
 	public MessageService(MessageRepository messageRepository) {
 		this.messageRepository = messageRepository;
+		
 	}
 	
 	public List<Message> findAllMessages(){
 		return messageRepository.findAll();
 	}
 	
-	public void saveMessage(String content, User user) {
+	public void saveMessage(String content, User user, ChatGroup group) {
 		Message message = new Message();
 		
 		message.setContent(content);
 		message.setUser(user);
+		message.setChatGroup(group);
 		
 		messageRepository.save(message);
 	}
+	
+	public List<Message> getMessagesByGroupId(Integer groupId){
+		return messageRepository.findByChatGroupIdOrderByCreatedAtAsc(groupId);
+	}
+	
 
 }

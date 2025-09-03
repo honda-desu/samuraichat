@@ -33,8 +33,20 @@ CREATE TABLE IF NOT EXISTS chat_groups (
 CREATE TABLE IF NOT EXISTS messages (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
+    chat_group_id INT NOT NULL,
     content VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)
+    FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id)
+);
+
+CREATE TABLE IF NOT EXISTS chat_group_members (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    chat_group_id INT NOT NULL,
+    user_id INT NOT NULL,
+    joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    UNIQUE(chat_group_id, user_id) -- 同じユーザーが同じグループに重複参加しないように
 );
 

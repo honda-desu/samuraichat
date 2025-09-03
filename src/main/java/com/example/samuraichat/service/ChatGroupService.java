@@ -1,5 +1,7 @@
 package com.example.samuraichat.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,5 +19,9 @@ public class ChatGroupService {
 	
 	public Page<ChatGroup> findAllChatGroups(Pageable pageable){
 		return chatGroupRepository.findAll(pageable);
+	}
+	
+	public Optional<ChatGroup> findById(Integer groupId){
+		return chatGroupRepository.findById(groupId);
 	}
 }
