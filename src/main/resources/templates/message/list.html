@@ -30,6 +30,13 @@
 						<input type="text" name="content" placeholder="メッセージを入力..." required />
 						<button type="submit">送信</button>
 					</form>
+					
+					<form th:unless="${isFavorite}"th:action="@{/groups/{groupId}/favorites/create(groupId=${groupId})}" method="post">
+						<button type="submit" class="btn btn-outline-primary">お気に入り登録</button>
+					</form>
+					<form th:if="${isFavorite}" th:action="@{/favorites/__${favorite.id}__/delete}" method="post">
+						<button type="submit" class="btn btn-outline-primary">お気に入り解除</button>
+					</form>
 				</div>
 			</div>
 		</main>
