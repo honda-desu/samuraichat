@@ -1,9 +1,14 @@
 package com.example.samuraichat.entity;
 
+
 import java.sql.Timestamp;
+
+import com.example.samuraichat.enums.MessageType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +36,13 @@ public class Message {
 	
 	@Column(name = "content")
 	private String content;
+	
+	@Column(name = "image_path")
+    private String imagePath;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "message_type")
+	private MessageType messageType;
 	
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Timestamp createdAt;

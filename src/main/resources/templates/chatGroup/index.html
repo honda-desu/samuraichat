@@ -20,6 +20,10 @@
 
 						<h1 class="mb-4 text-center">チャットグループ一覧</h1>
 
+						<div th:if="${successMessage}" class="alert alert-info">
+							<span th:text="${successMessage}"></span>
+						</div>
+
 
 
 						<table class="table">
@@ -41,6 +45,8 @@
 
 						</table>
 
+						<a th:href="@{/groups/register}" class="btn text-white shadow-sm mb-3 samuraichat-btn">登録</a>
+
 						<!-- ページネーション -->
 						<div th:if="${chatGroupPage.getTotalPages() > 1}" class="d-flex justify-content-center">
 							<nav aria-label="チャットグループ一覧ページ">
@@ -48,7 +54,7 @@
 									<li class="page-item">
 										<span th:if="${chatGroupPage.isFirst()}" class="page-link disabled">前</span>
 										<a th:unless="${chatGroupPage.isFirst()}"
-											th:href="@{/admin/chatGroups(page = ${chatGroupPage.getNumber() - 1})}"
+											th:href="@{/groups(page = ${chatGroupPage.getNumber() - 1})}"
 											class="page-link samuraichat-page-link">前</a>
 									</li>
 									<li th:each="i : ${#numbers.sequence(0, chatGroupPage.getTotalPages() - 1)}"
@@ -56,13 +62,13 @@
 										<span th:if="${i == chatGroupPage.getNumber()}"
 											class="page-link active samuraichat-active" th:text="${i + 1}"></span>
 										<a th:unless="${i == chatGroupPage.getNumber()}"
-											th:href="@{/admin/chatGroups(page = ${i})}"
-											class="page-link samuraichat-page-link" th:text="${i + 1}"></a>
+											th:href="@{/groups(page = ${i})}" class="page-link samuraichat-page-link"
+											th:text="${i + 1}"></a>
 									</li>
 									<li class="page-item">
 										<span th:if="${chatGroupPage.isLast()}" class="page-link disabled">次</span>
 										<a th:unless="${chatGroupPage.isLast()}"
-											th:href="@{/admin/chatGroups(page = ${chatGroupPage.getNumber() + 1})}"
+											th:href="@{/groups(page = ${chatGroupPage.getNumber() + 1})}"
 											class="page-link samuraichat-page-link">次</a>
 									</li>
 								</ul>

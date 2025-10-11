@@ -3,6 +3,11 @@ CREATE TABLE IF NOT EXISTS roles (
    name VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS chat_groups (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
@@ -12,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
     role_id INT NOT NULL,
     enabled BOOLEAN NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles (id)
 );
 
@@ -21,20 +26,17 @@ CREATE TABLE IF NOT EXISTS verification_tokens (
     user_id INT NOT NULL UNIQUE,
     token VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)
-);
-
-CREATE TABLE IF NOT EXISTS chat_groups (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS messages (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     chat_group_id INT NOT NULL,
-    content VARCHAR(255) NOT NULL,
+    content TEXT,
+    image_path VARCHAR(255),
+    message_type VARCHAR(10) NOT NULL DEFAULT 'TEXT',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id)
@@ -47,7 +49,7 @@ CREATE TABLE IF NOT EXISTS chat_group_members (
     joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id),
     FOREIGN KEY (user_id) REFERENCES users(id),
-    UNIQUE(chat_group_id, user_id) -- 同じユーザーが同じグループに重複参加しないように
+    UNIQUE(chat_group_id, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS favorites (
@@ -57,5 +59,5 @@ CREATE TABLE IF NOT EXISTS favorites (
     favorited_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id),
-    UNIQUE(user_id, chat_group_id) -- 同じユーザーが同じグループを重複してお気に入り登録できないように
+    UNIQUE(user_id, chat_group_id)
 );

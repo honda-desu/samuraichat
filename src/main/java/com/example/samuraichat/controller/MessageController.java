@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.samuraichat.entity.ChatGroup;
 import com.example.samuraichat.entity.Favorite;
@@ -32,14 +34,14 @@ public class MessageController {
 		this.favoriteService = favoriteService;
 	}
 	
-	@GetMapping("/messages")
-	public String showAllMessages(Model model) {
-		List<Message> messages = messageService.findAllMessages();
-		
-		model.addAttribute("messages", messages);
-		
-		return "message/index";
-	}
+//	@GetMapping("/messages")
+//	public String showAllMessages(Model model) {
+//		List<Message> messages = messageService.findAllMessages();
+//		
+//		model.addAttribute("messages", messages);
+//		
+//		return "message/index";
+//	}
 	
 	@PostMapping("/groups/{groupId}/messages/send")
 	public String sendMessage(@PathVariable("groupId") Integer groupId,
@@ -53,7 +55,7 @@ public class MessageController {
 	        .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
 
 	    // メッセージ保存（グループとユーザーを紐づけて）
-	    messageService.saveMessage(content, user, group);
+	    messageService.saveTextMessage(content, user, group);
 
 	    // グループのメッセージ一覧にリダイレクト
 	    return "redirect:/groups/" + groupId + "/messages";
@@ -86,8 +88,48 @@ public class MessageController {
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("favorite", favorite);
 		model.addAttribute("isFavorite", isFavorite);
+		model.addAttribute("chatGroup", chatGroup);
 		
 		return "message/list";
+	}
+	
+	@PostMapping("/groups/{groupId}/images/upload")
+	public String uploadImage(@PathVariable Integer groupId,
+	                          @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+	                          @RequestParam("imageFile") MultipartFile imageFile,
+	                          RedirectAttributes redirectAttributes) {
+
+	    if (imageFile.isEmpty()) {
+	        redirectAttributes.addFlashAttribute("error", "画像ファイルが選択されていません。");
+	        return "redirect:/groups/" + groupId + "/messages";
+	    }
+
+	    User user = userDetailsImpl.getUser();
+	    ChatGroup group = chatGroupService.findById(groupId)
+	        .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
+
+	    try {
+	        // ファイル名生成（UUID + 元ファイル名）
+	        String fileName = java.util.UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+
+	     // 保存先パス（プロジェクトルート/uploads）
+	        String uploadRoot = System.getProperty("user.dir") + "/uploads";
+	        java.nio.file.Path uploadDir = java.nio.file.Paths.get(uploadRoot);
+	        java.nio.file.Files.createDirectories(uploadDir); // ディレクトリがなければ作成
+
+	        java.nio.file.Path filePath = uploadDir.resolve(fileName);
+	        imageFile.transferTo(filePath.toFile());
+
+	        // メッセージとして保存
+	        String imagePath = "/uploads/" + fileName;
+	        messageService.saveImageMessage(imagePath, user, group);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        redirectAttributes.addFlashAttribute("error", "画像のアップロードに失敗しました。");
+	    }
+
+	    return "redirect:/groups/" + groupId + "/messages";
 	}
 
 }

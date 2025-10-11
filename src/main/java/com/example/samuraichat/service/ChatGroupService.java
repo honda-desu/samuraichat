@@ -5,8 +5,10 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.samuraichat.entity.ChatGroup;
+import com.example.samuraichat.form.ChatRegisterForm;
 import com.example.samuraichat.repository.ChatGroupRepository;
 
 @Service
@@ -24,4 +26,15 @@ public class ChatGroupService {
 	public Optional<ChatGroup> findById(Integer groupId){
 		return chatGroupRepository.findById(groupId);
 	}
+	
+	@Transactional
+	public void create(ChatRegisterForm chatRegisterForm) {
+		ChatGroup chatGroup = new ChatGroup();
+		
+		chatGroup.setName(chatRegisterForm.getName());
+		
+		chatGroupRepository.save(chatGroup);
+	}
+	
+	
 }

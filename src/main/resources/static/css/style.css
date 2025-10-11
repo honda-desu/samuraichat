@@ -28,6 +28,9 @@ footer {
 }
 
 .samuraichat-wrapper {
+	display: flex;
+	flex-direction: column;
+
 	min-height: 100vh;
 	position: relative;
 	padding-bottom: 60px;
@@ -72,10 +75,10 @@ footer {
 .chat-container {
 	flex: 1;
 	overflow-y: auto;
-	padding: 20px;
+	padding: 5px;
 	display: flex;
 	flex-direction: column;
-	height: calc(100vh - 200px);
+	height: calc(100vh - 260px);
 }
 
 .message {
@@ -89,8 +92,9 @@ footer {
 	color: #666;
 }
 
+.image-upload-form,
 .input-form {
-	padding: 15px;
+	padding: 3px;
 	border-top: 1px solid #ccc;
 	background: #f9f9f9;
 }
@@ -104,6 +108,29 @@ footer {
 .input-form button {
 	padding: 8px 16px;
 }
+
+.favorite{
+	padding: 3px;
+	border-top: 1px solid #ccc;
+	background: #f9f9f9;
+	border-bottom: 1px solid #ccc;
+} 
+
+.favorite-header {
+  display: flex;
+  
+  align-items: center;
+}
+
+.favorite-header div {
+  margin-right: 5px;
+  font-size: 1rem;
+}
+
+.favorite-header button {
+  white-space: nowrap;
+}
+
 
 @media screen and (min-width: 1400px) {
 	.samuraichat-container {
