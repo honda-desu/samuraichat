@@ -55,7 +55,7 @@ public class ChatGroupController {
 		}
 		
 		chatGroupService.create(chatRegisterForm);
-		redirectAttributes.addFlashAttribute("successMessage", "民宿を登録しました。");
+		redirectAttributes.addFlashAttribute("successMessage", "新しいチャットグループを登録しました。");
 		
 		return "redirect:/groups";
 	}
