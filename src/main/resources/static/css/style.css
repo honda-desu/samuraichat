@@ -55,6 +55,23 @@ footer {
 	opacity: 0.8;
 }
 
+.samuraichat-link-danger {
+	color: #f2594b;
+}
+
+.samuraichat-link-danger:hover {
+	color: #a63c3c;
+}
+
+.samuraichat-btn-danger {
+	background-color: #f2594b !important;
+	transition: 0.1s;
+}
+
+.samuraichat-btn-danger:hover {
+	opacity: 0.8;
+}
+
 .samuraichat-dropdown-item:active {
 	background-color: #5196a6;
 }

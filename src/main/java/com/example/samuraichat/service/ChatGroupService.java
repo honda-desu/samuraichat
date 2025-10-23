@@ -36,5 +36,9 @@ public class ChatGroupService {
 		chatGroupRepository.save(chatGroup);
 	}
 	
+	@Transactional
+	public void delete(ChatGroup chatGroup) {
+		chatGroupRepository.delete(chatGroup);
+	}
 	
 }
