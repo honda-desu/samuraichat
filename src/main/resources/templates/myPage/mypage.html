@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+
+	<div th:replace="~{fragment :: styles}"></div>
+
+	<title>SAMURAI Chat</title>
+</head>
+
+<body>
+	<div class="samuraichat-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container-fluid pt-4 pb-5 samuraichat-container">
+				<img th:if="${user.profileImage}" th:src="@{${user.profileImage}}" alt="プロフィール画像" width="150">
+
+				<p>名前：<span th:text="${user.name}"></span></p>
+				<p>ふりがな：<span th:text="${user.furigana}"></span></p>
+				<p>メール：<span th:text="${user.email}"></span></p>
+
+				<p>プロフィール文：</p>
+				<p th:text="${user.profileText} ?: 'まだプロフィールが設定されていません'"></p>
+
+				<a th:href="@{/mypage/edit}">プロフィールを編集する</a>
+			</div>
+
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     role_id INT NOT NULL,
     enabled BOOLEAN NOT NULL,
+    profile_image VARCHAR(255),      -- ★追加
+    profile_text TEXT,               -- ★追加
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles (id)

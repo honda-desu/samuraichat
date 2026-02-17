@@ -8,11 +8,11 @@
         <title>SAMURAI Chat</title>
     </head>
     <body>
-        <div class="samuraitravel-wrapper">
+        <div class="samuraichat-wrapper">
             <div th:replace="~{fragment :: header}"></div>
 
             <main>
-                <div class="container pt-4 pb-5 samuraichat-container">
+                <div class="container-fluid pt-4 pb-5 samuraichat-container">
                     <div th:if="${param.loggedIn}" class="alert alert-info">
                         ログインしました。
                     </div>

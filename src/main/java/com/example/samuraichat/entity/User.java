@@ -42,6 +42,12 @@ public class User {
     @Column(name = "enabled")
     private Boolean enabled;
 
+    @Column(name = "profile_image")
+    private String profileImage;
+
+    @Column(name = "profile_text")
+    private String profileText;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
 
