@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+
+	<div th:replace="~{fragment :: styles}"></div>
+
+	<title>SAMURAI Chat</title>
+</head>
+
+<body>
+	<div class="samuraichat-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container-fluid pt-4 pb-5 samuraichat-container">
+				<h1>プロフィール編集</h1>
+
+				<form th:action="@{/mypage/edit}" method="post" enctype="multipart/form-data">
+					<div>
+						<label>プロフィール画像</label>
+						<input type="file" name="profileImage">
+					</div>
+					
+					<div>
+						<label>名前</label><br>
+						<input type="text" name="name" th:value="${user.name}">
+					</div>
+
+					<div>
+						<label>ふりがな</label><br>
+						<input type="text" name="furigana" th:value="${user.furigana}">
+					</div>
+
+					<div>
+						<label>プロフィール文</label><br>
+						<textarea name="profileText" rows="5" cols="40" th:text="${user.profileText}"></textarea>
+					</div>
+
+					<button type="submit">更新する</button>
+				</form>
+
+			</div>
+
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

@@ -1,8 +1,16 @@
 package com.example.samuraichat.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.samuraichat.entity.Role;
 import com.example.samuraichat.entity.User;
@@ -59,5 +67,42 @@ public class UserService {
 		return userRepository.findByEmail(email);
 	}
 	
+	//プロフィールを編集する
+	@Transactional
+	public void updateProfile(String email, String name, String furigana, String profileText, MultipartFile profileImage) {
+		User user = userRepository.findByEmail(email);
+		
+		user.setName(name);
+		user.setFurigana(furigana);
+		user.setProfileText(profileText);
+		
+		//画像がアップロードされた場合のみ処理
+		if(!profileImage.isEmpty()) {
+			// 画像がアップロードされた場合のみ処理
+		    if (!profileImage.isEmpty()) {
+		        try {
+		            String fileName = UUID.randomUUID().toString() + "_" + profileImage.getOriginalFilename();
+		            Path uploadPath = Paths.get("uploads");
+
+		            if (!Files.exists(uploadPath)) {
+		                Files.createDirectories(uploadPath);
+		            }
+
+		            Path filePath = uploadPath.resolve(fileName);
+		            Files.copy(profileImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+		            // DB に保存するのはファイル名だけでOK
+		            user.setProfileImage(fileName);
+
+		        } catch (IOException e) {
+		            throw new RuntimeException("画像の保存に失敗しました", e);
+		        }
+		    }
+
+		}
+		
+		userRepository.save(user);
+				
+	}
 	
 }

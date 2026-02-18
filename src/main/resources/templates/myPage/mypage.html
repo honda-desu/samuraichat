@@ -15,7 +15,11 @@
 
 		<main>
 			<div class="container-fluid pt-4 pb-5 samuraichat-container">
-				<img th:if="${user.profileImage}" th:src="@{${user.profileImage}}" alt="プロフィール画像" width="150">
+				<div>
+					<img th:if="${user.profileImage != null}" th:src="@{'/uploads/' + ${user.profileImage}}"
+						alt="プロフィール画像" width="150">
+				</div>
+
 
 				<p>名前：<span th:text="${user.name}"></span></p>
 				<p>ふりがな：<span th:text="${user.furigana}"></span></p>
