@@ -7,6 +7,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,6 +107,11 @@ public class UserService {
 		
 		userRepository.save(user);
 				
+	}
+	
+	public Page<User> getUserPage(int page) {
+	    Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+	    return userRepository.findAll(pageable);
 	}
 	
 }

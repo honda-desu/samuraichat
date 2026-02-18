@@ -148,6 +148,49 @@ footer {
   white-space: nowrap;
 }
 
+/* チャットのアイコンを設定 */
+.chat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* ←丸くする */
+    object-fit: cover;  /* 画像の比率を保ったままトリミング */
+    margin-right: 8px;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+    text-align: center;
+}
+
+.modal-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.close-btn {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
 
 @media screen and (min-width: 1400px) {
 	.samuraichat-container {

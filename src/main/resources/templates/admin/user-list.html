@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>会員一覧</title>
+</head>
+
+<body>
+<div class="samuraichat-wrapper">
+    <div th:replace="~{fragment :: header}"></div>
+
+    <main>
+        <div class="container pt-4 pb-5 samuraichat-container">
+            <div class="row justify-content-center">
+                <div class="col-xxl-9 col-xl-10 col-lg-11">
+
+                    <h1 class="mb-4 text-center">会員一覧</h1>
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">名前</th>
+                            <th scope="col">メール</th>
+                            <th scope="col">プロフィール画像</th>
+                            <th scope="col">登録日</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="user : ${userPage}">
+                            <td th:text="${user.id}"></td>
+                            <td th:text="${user.name}"></td>
+                            <td th:text="${user.email}"></td>
+
+                            <td>
+                                <img th:if="${user.profileImage != null}"
+                                     th:src="@{'/uploads/' + ${user.profileImage}}"
+                                     style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+
+                                <img th:if="${user.profileImage == null}"
+                                     th:src="@{/images/noimage.png}"
+                                     style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                            </td>
+
+                            <td th:text="${#dates.format(user.createdAt, 'yyyy-MM-dd')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- ページネーション -->
+                    <div th:if="${userPage.totalPages > 1}" class="d-flex justify-content-center">
+                        <nav aria-label="会員一覧ページ">
+                            <ul class="pagination">
+
+                                <li class="page-item">
+                                    <span th:if="${userPage.first}" class="page-link disabled">前</span>
+                                    <a th:unless="${userPage.first}"
+                                       th:href="@{/admin/users(page=${userPage.number - 1})}"
+                                       class="page-link samuraichat-page-link">前</a>
+                                </li>
+
+                                <li th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
+                                    class="page-item">
+                                    <span th:if="${i == userPage.number}"
+                                          class="page-link active samuraichat-active"
+                                          th:text="${i + 1}"></span>
+
+                                    <a th:unless="${i == userPage.number}"
+                                       th:href="@{/admin/users(page=${i})}"
+                                       class="page-link samuraichat-page-link"
+                                       th:text="${i + 1}"></a>
+                                </li>
+
+                                <li class="page-item">
+                                    <span th:if="${userPage.last}" class="page-link disabled">次</span>
+                                    <a th:unless="${userPage.last}"
+                                       th:href="@{/admin/users(page=${userPage.number + 1})}"
+                                       class="page-link samuraichat-page-link">次</a>
+                                </li>
+
+                            </ul>
+                        </nav>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragment :: footer}"></div>
+</div>
+
+<div th:replace="~{fragment :: scripts}"></div>
+</body>
+</html>
