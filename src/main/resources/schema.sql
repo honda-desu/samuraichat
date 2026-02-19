@@ -72,3 +72,25 @@ CREATE TABLE IF NOT EXISTS favorites (
     CONSTRAINT fk_favorites_chat_group FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id) ON DELETE CASCADE,
     UNIQUE(user_id, chat_group_id)
 );
+
+CREATE TABLE IF NOT EXISTS dm_room (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user1_id INT NOT NULL,
+    user2_id INT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_dmroom_user1 FOREIGN KEY (user1_id) REFERENCES users(id),
+    CONSTRAINT fk_dmroom_user2 FOREIGN KEY (user2_id) REFERENCES users(id)
+);
+
+CREATE TABLE dm_message (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    room_id BIGINT NOT NULL,
+    sender_id BIGINT NOT NULL,
+    content TEXT,
+    image_path VARCHAR(255),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_dmmessage_room FOREIGN KEY (room_id) REFERENCES dm_room(id),
+    CONSTRAINT fk_dmmessage_sender FOREIGN KEY (sender_id) REFERENCES users(id)
+);
