@@ -20,6 +20,8 @@ public class AdminUserController {
 	
 	@GetMapping("/admin/users")
 	public String showUserList(@RequestParam(defaultValue = "0") int page, Model model) {
+		
+		
 		Page<User> userPage = userService.getUserPage(page);
 		model.addAttribute("userPage", userPage);
 		return "admin/user-list";

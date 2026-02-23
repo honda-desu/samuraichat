@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+	<th:block th:replace="~{fragment :: meta}"></th:block>
+	<th:block th:replace="~{fragment :: styles}"></th:block>
+	<title>DM Chat</title>
+</head>
+
+<!-- ★ プロフィール表示モーダル ★ -->
+<div id="profileModal" class="modal-overlay" style="display:none;">
+	<div class="modal-content">
+		<span class="close-btn" onclick="closeProfileModal()">&times;</span>
+
+		<img id="modalProfileImage" class="modal-icon">
+		<h2 id="modalUserName"></h2>
+		<p id="modalUserText"></p>
+	</div>
+</div>
+
+<script src="/js/chat.js"></script>
+
+<body>
+	<div class="samuraichat-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container">
+				<div class="samuraichat-container">
+
+					<!-- ★ メッセージ一覧 ★ -->
+					<div class="chat-container">
+						<div th:each="msg : ${messages}" class="message">
+
+							<!-- プロフィール画像（あり） -->
+							<img th:if="${msg.sender.profileImage != null}"
+								th:src="@{'/uploads/' + ${msg.sender.profileImage}}" class="chat-icon" th:attr="data-name=${msg.sender.name},
+              data-text=${msg.sender.profileText},
+              data-image=@{'/uploads/' + ${msg.sender.profileImage}}" onclick="openProfileModal(this)">
+
+							<!-- プロフィール画像（なし） -->
+							<img th:if="${msg.sender.profileImage == null}" th:src="@{/images/noimage.png}"
+								class="chat-icon" th:attr="data-name=${msg.sender.name},
+              data-text=${msg.sender.profileText},
+              data-image=@{/images/noimage.png}" onclick="openProfileModal(this)">
+
+							<div>
+								<strong th:text="${msg.sender.name}">ユーザー名</strong>
+							</div>
+
+							<!-- テキストメッセージ -->
+							<div th:if="${msg.content != null}" th:text="${msg.content}"></div>
+
+							<!-- 画像メッセージ -->
+							<div th:if="${msg.imagePath != null}">
+								<img th:src="${msg.imagePath}" style="max-width: 300px; border-radius: 8px;">
+							</div>
+
+							<div class="meta" th:text="${#dates.format(msg.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+						</div>
+					</div>
+
+					<!-- ★ メッセージ送信フォーム ★ -->
+					<div class="fixed-bottom-panel">
+						<form class="input-form" th:action="@{/dm/send}" method="post">
+							<input type="hidden" name="roomId" th:value="${roomId}">
+							<input type="text" name="content" placeholder="メッセージを入力..." required>
+							<button type="submit">送信</button>
+						</form>
+
+						<!-- 画像投稿フォーム（必要なら） -->
+						<form class="image-upload-form" th:action="@{'/dm/' + (${roomId}) + '/images/upload'}" method="post"
+							enctype="multipart/form-data">
+							<input type="hidden" name="roomId" th:value="${roomId}">
+							<input type="file" name="imageFile" accept="image/*">
+							<button type="submit" class="btn btn-outline-success">画像を投稿</button>
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<script>
+		window.addEventListener('load', function () {
+			const chatContainer = document.querySelector('.chat-container');
+			if (chatContainer) {
+				chatContainer.scrollTop = chatContainer.scrollHeight;
+			}
+		});
+	</script>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

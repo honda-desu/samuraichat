@@ -1,7 +1,12 @@
+DROP TABLE IF EXISTS dm_message;
+DROP TABLE IF EXISTS dm_room;
+
 DROP TABLE IF EXISTS favorites;
 DROP TABLE IF EXISTS chat_group_members;
 DROP TABLE IF EXISTS messages;
+
 DROP TABLE IF EXISTS verification_tokens;
+
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS chat_groups;
 DROP TABLE IF EXISTS roles;
@@ -83,14 +88,19 @@ CREATE TABLE IF NOT EXISTS dm_room (
     CONSTRAINT fk_dmroom_user2 FOREIGN KEY (user2_id) REFERENCES users(id)
 );
 
-CREATE TABLE dm_message (
+
+CREATE TABLE IF NOT EXISTS dm_message (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     room_id BIGINT NOT NULL,
     sender_id BIGINT NOT NULL,
     content TEXT,
     image_path VARCHAR(255),
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
-    CONSTRAINT fk_dmmessage_room FOREIGN KEY (room_id) REFERENCES dm_room(id),
-    CONSTRAINT fk_dmmessage_sender FOREIGN KEY (sender_id) REFERENCES users(id)
+ALTER TABLE dm_message
+    ADD CONSTRAINT fk_dmmessage_room FOREIGN KEY (room_id) REFERENCES dm_room(id);
+
+ALTER TABLE dm_message
+    ADD CONSTRAINT fk_dmmessage_sender FOREIGN KEY (sender_id) REFERENCES users(id);
 );

@@ -1,6 +1,6 @@
 package com.example.samuraichat.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,7 +39,7 @@ public class DmMessage {
 	@Column(name = "image_path")
 	private String imagePath;
 	
-	@Column(name = "created_at")
-	private LocalDateTime createdAt = LocalDateTime.now();
+	@Column(name = "created_at", insertable = false, updatable = false)
+	private Timestamp createdAt;
 
 }

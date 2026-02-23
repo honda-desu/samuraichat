@@ -46,6 +46,12 @@
                             </td>
 
                             <td th:text="${#dates.format(user.createdAt, 'yyyy-MM-dd')}"></td>
+                            
+                            <td>
+								<a th:href="@{'/dm/room/' + ${user.id}}"
+								class="btn samuraichat-btn">
+								DMを送る</a>
+							</td>
                         </tr>
                         </tbody>
                     </table>

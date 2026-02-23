@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>DM一覧</title>
+</head>
+
+<body>
+    <div class="samuraichat-wrapper">
+        <div th:replace="~{fragment :: header}"></div>
+
+        <main>
+            <div class="container pt-4 pb-5 samuraichat-container">
+                <div class="row justify-content-center">
+                    <div class="col-xxl-9 col-xl-10 col-lg-11">
+
+                        <h1 class="mb-4 text-center">DM一覧</h1>
+
+                        <div th:if="${successMessage}" class="alert alert-info">
+                            <span th:text="${successMessage}"></span>
+                        </div>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">相手</th>
+                                    <th scope="col">最新メッセージ</th>
+                                    <th scope="col">開く</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr th:each="room : ${rooms}"
+                                    th:with="partner=${room.user1.id == session.userId ? room.user2 : room.user1}">
+
+                                    <!-- 相手のプロフィール画像 -->
+                                    <td>
+                                        <img th:if="${partner.profileImage != null}"
+                                             th:src="@{'/uploads/' + ${partner.profileImage}}"
+                                             style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-right:10px;">
+                                        <img th:if="${partner.profileImage == null}"
+                                             th:src="@{/images/noimage.png}"
+                                             style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-right:10px;">
+
+                                        <span th:text="${partner.name}">ユーザー名</span>
+                                    </td>
+
+                                    <!-- 最新メッセージ（Service側でセットしている想定） -->
+                                    <td th:text="${room.latestMessage != null ? room.latestMessage : 'メッセージはまだありません'}">
+                                        最新メッセージ
+                                    </td>
+
+                                    <!-- DM画面へ -->
+                                    <td>
+                                        <a th:href="@{'/dm/chat/' + ${room.id}}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            開く
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div th:replace="~{fragment :: footer}"></div>
+    </div>
+
+    <div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

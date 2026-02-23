@@ -81,5 +81,21 @@ public class DmService {
 		
 		dmMessageRepository.save(message);
 	}
+	
+	// ★ 画像メッセージ保存（MessageService と同じ構造）
+    public void saveImageMessage(DmRoom room, User sender, String imagePath) {
+        DmMessage message = new DmMessage();
+        message.setImagePath(imagePath);
+        message.setSender(sender);
+        message.setRoom(room);
+
+        dmMessageRepository.save(message);
+    }
+    
+    public DmRoom findById(Long roomId) {
+        return dmRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("指定されたDMルームが存在しません"));
+    }
+
 
 }

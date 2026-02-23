@@ -15,6 +15,10 @@
 		<img id="modalProfileImage" class="modal-icon">
 		<h2 id="modalUserName"></h2>
 		<p id="modalUserText"></p>
+
+		<!-- ★ DMボタン（JSで動的にリンクを入れる） ★ -->
+		<a id="modalDmButton" class="btn btn-outline-primary mt-3">メッセージを送る</a>
+
 	</div>
 </div>
 
@@ -28,22 +32,25 @@
 
 		<main>
 			<div class="container">
-				<div clasa="samuraichat-container">
+				<div class="samuraichat-container">
 
 					<div class="chat-container">
 						<div th:each="msg : ${messages}" class="message">
 
-							<!-- ★ プロフィール画像アイコン（プロフィール画像あり） ★ -->
+							<!-- プロフィール画像あり -->
 							<img th:if="${msg.user != null and msg.user.profileImage != null}"
-								th:src="@{'/uploads/' + ${msg.user.profileImage}}" class="chat-icon" th:attr="data-name=${msg.user.name},
-              data-text=${msg.user.profileText},
-              data-image=@{'/uploads/' + ${msg.user.profileImage}}" onclick="openProfileModal(this)">
+								th:src="@{'/uploads/' + ${msg.user.profileImage}}" class="chat-icon"
+								th:data-name="${msg.user.name}" th:data-text="${msg.user.profileText}"
+								th:data-image="@{'/uploads/' + ${msg.user.profileImage}}"
+								th:data-user-id="${msg.user.id}" onclick="openProfileModal(this)">
+							
 
-							<!-- ★ プロフィール画像アイコン（NoImage） ★ -->
-							<img th:if="${msg.user == null or msg.user.profileImage == null}"
-								th:src="@{/images/noimage.png}" class="chat-icon" th:attr="data-name=${msg.user.name},
-              data-text=${msg.user.profileText},
-              data-image=@{/images/noimage.png}" onclick="openProfileModal(this)">
+
+							<!-- プロフィール画像なし -->
+							<img th:if="${msg.user != null and msg.user.profileImage == null}"
+								th:src="@{/images/noimage.png}" class="chat-icon" th:data-name="${msg.user.name}"
+								th:data-text="${msg.user.profileText}" th:data-image="@{/images/noimage.png}"
+								th:data-user-id="${msg.user.id}" onclick="openProfileModal(this)">
 
 
 							<div>
