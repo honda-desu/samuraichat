@@ -35,7 +35,7 @@ footer {
 	position: relative;
 	padding-bottom: 60px;
 	box-sizing: border-box;
-	
+
 }
 
 .samuraichat-navbar {
@@ -126,75 +126,116 @@ footer {
 	padding: 8px 16px;
 }
 
-.favorite{
+.favorite {
 	padding: 3px;
 	border-top: 1px solid #ccc;
 	background: #f9f9f9;
 	border-bottom: 1px solid #ccc;
-} 
+}
 
 .favorite-header {
-  display: flex;
-  
-  align-items: center;
+	display: flex;
+
+	align-items: center;
 }
 
 .favorite-header div {
-  margin-right: 5px;
-  font-size: 1rem;
+	margin-right: 5px;
+	font-size: 1rem;
 }
 
 .favorite-header button {
-  white-space: nowrap;
+	white-space: nowrap;
 }
 
 /* チャットのアイコンを設定 */
 .chat-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%; /* ←丸くする */
-    object-fit: cover;  /* 画像の比率を保ったままトリミング */
-    margin-right: 8px;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	/* ←丸くする */
+	object-fit: cover;
+	/* 画像の比率を保ったままトリミング */
+	margin-right: 8px;
 }
 
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 999;
 }
 
 .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    width: 300px;
-    text-align: center;
+	background: white;
+	padding: 20px;
+	border-radius: 12px;
+	width: 300px;
+	text-align: center;
 }
 
 .modal-icon {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	object-fit: cover;
+	margin-bottom: 10px;
 }
 
 .close-btn {
-    float: right;
-    font-size: 24px;
-    cursor: pointer;
+	float: right;
+	font-size: 24px;
+	cursor: pointer;
 }
+
+/* カレンダーの見た目を整える */
+.calendar-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.calendar-table th,
+.calendar-table td {
+	border: 1px solid #ddd;
+	vertical-align: top;
+	height: 120px;
+	padding: 6px;
+}
+
+.calendar-table th {
+	background-color: #f8f9fa;
+	text-align: center;
+	font-weight: bold;
+}
+
+.day-number {
+	font-weight: bold;
+	margin-bottom: 4px;
+}
+
+.event-item {
+	font-size: 0.85rem;
+	background: #e3f2fd;
+	padding: 2px 4px;
+	margin-bottom: 2px;
+	border-radius: 4px;
+}
+
+.today-highlight {
+	background-color: #fff3cd !important;
+}
+
 
 @media screen and (min-width: 1400px) {
 	.samuraichat-container {
 		max-width: 1200px;
 	}
-	
+
 }

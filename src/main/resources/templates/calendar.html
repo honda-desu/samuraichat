@@ -1,37 +1,74 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <div th:replace="~{fragment :: meta}"></div>
-    <div th:replace="~{fragment :: styles}"></div>
-    <title>今日の予定</title>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>カレンダー | SAMURAI Chat</title>
 </head>
+
 <body>
-<div class="samuraichat-wrapper">
+	<div class="samuraichat-wrapper">
 
-    <div th:replace="~{fragment :: header}"></div>
+		<div th:replace="~{fragment :: header}"></div>
 
-    <main>
-        <div class="container-fluid pt-4 pb-5 samuraichat-container">
+		<main>
+			<div class="container-fluid pt-4 pb-5 samuraichat-container">
 
-            <h2>今日の予定</h2>
+				<h2 class="mb-4">カレンダー</h2>
 
-            <ul th:if="${events}">
-                <li th:each="event : ${events}">
-                    <strong th:text="${event.summary}"></strong>
-                    <span th:text="${event.start.dateTime}"></span>
-                </li>
-            </ul>
+				<h2 class="mb-4">
+					<span th:text="${targetMonth.year}"></span>年
+					<span th:text="${targetMonth.monthValue}"></span>月
+				</h2>
 
-            <p th:if="${events == null or #lists.isEmpty(events)}">
-                今日の予定はありません。
-            </p>
+				<div class="mb-3">
+					<a th:href="@{/calendar(year=${prevMonth.year}, month=${prevMonth.monthValue})}"
+						class="btn btn-outline-primary">前月</a>
 
-        </div>
-    </main>
+					<a th:href="@{/calendar(year=${nextMonth.year}, month=${nextMonth.monthValue})}"
+						class="btn btn-outline-primary">次月</a>
+				</div>
 
-    <div th:replace="~{fragment :: footer}"></div>
-</div>
+				<!-- カレンダー本体 -->
+				<table class="calendar-table">
+					<thead>
+						<tr>
+							<th>日</th>
+							<th>月</th>
+							<th>火</th>
+							<th>水</th>
+							<th>木</th>
+							<th>金</th>
+							<th>土</th>
+						</tr>
+					</thead>
 
-<div th:replace="~{fragment :: scripts}"></div>
+					<tbody>
+						<tr th:each="week : ${calendarMatrix}">
+							<td th:each="day : ${week}" th:classappend="${day.equals(today) ? ' today-highlight' : ''}">
+
+								<!-- 日付 -->
+								<div class="day-number" th:text="${day.dayOfMonth}"></div>
+
+								<!-- 予定一覧 -->
+								<div th:each="event : ${events}" th:if="${event.startDateString == day.toString()}"
+									class="event-item">
+									<span th:text="${event.summary}"></span>
+								</div>
+
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
 </body>
+
 </html>
