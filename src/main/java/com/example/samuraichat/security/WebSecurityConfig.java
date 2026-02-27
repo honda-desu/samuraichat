@@ -26,6 +26,13 @@ public class WebSecurityConfig {
             	.requestMatchers("/messages/**").hasAnyRole("ADMIN", "GENERAL") //管理者と会員のみアクセスを許可するURL
                 .anyRequest().authenticated()                   // 上記以外のURLはログインが必要（会員または管理者のどちらでもOK）
             )
+            
+         // ★★★ ここが重要：OAuth2 ログインを有効化 ★★★
+            .oauth2Login(oauth -> oauth
+                .loginPage("/login")  // Googleログイン後に /login を経由してもOK
+                .defaultSuccessUrl("/?loggedIn")  // Googleログイン成功後の遷移先
+            )
+
             .formLogin((form) -> form
                 .loginPage("/login")              // ログインページのURL
                 .successHandler(loginSuccessHandler)
