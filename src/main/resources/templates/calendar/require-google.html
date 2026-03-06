@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>Googleログインが必要です | SAMURAI Chat</title>
+</head>
+
+<body>
+<div class="samuraichat-wrapper">
+    <div th:replace="~{fragment :: header}"></div>
+
+    <main>
+        <div class="container-fluid pt-4 pb-5 samuraichat-container">
+
+            <!-- エラーメッセージ（Controller から渡される） -->
+            <div th:if="${errorMessage}" class="alert alert-warning text-center">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- 説明文 -->
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8 text-center">
+
+                    <h2 class="mb-4">Google カレンダーを利用するには<br>Google アカウントでログインしてください</h2>
+
+                    <p class="mb-4">
+                        現在のログイン方法（メールアドレス・パスワード）では<br>
+                        Google カレンダーの予定を取得することができません。
+                    </p>
+
+                    <p class="mb-4">
+                        <strong>同じメールアドレスで Google ログインすれば、<br>
+                        これまでのデータ（DM・お気に入り・プロフィールなど）はそのまま引き継がれます。</strong>
+                    </p>
+
+                    <!-- Google ログインボタン -->
+                    <a href="/oauth2/authorization/google" class="btn btn-danger btn-lg">
+                        Google アカウントでログインする
+                    </a>
+
+                    <!-- 戻るボタン -->
+                    <div class="mt-4">
+                        <a th:href="@{/}" class="btn btn-outline-secondary">トップページに戻る</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragment :: footer}"></div>
+</div>
+
+<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

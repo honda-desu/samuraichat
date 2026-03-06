@@ -15,26 +15,26 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        Authentication authentication)
-                                        throws IOException, ServletException {
-    	
-    	System.out.println("principal class = " + authentication.getPrincipal().getClass());
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request,
+	                                    HttpServletResponse response,
+	                                    Authentication authentication)
+	                                    throws IOException, ServletException {
 
-        // ★ principal は UserDetailsImpl
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+	    Object principal = authentication.getPrincipal();
+	    User user;
 
-        // ★ UserDetailsImpl から User を取り出す
-        User user = userDetails.getUser();
-        
-        System.out.println(">>> LoginSuccessHandler: userId = " + user.getId());
+	    if (principal instanceof UserDetailsImpl userDetails) {
+	        user = userDetails.getUser();
+	    } else if (principal instanceof CustomOAuth2User oauthUser) {
+	        user = oauthUser.getUser();
+	    } else {
+	        super.onAuthenticationSuccess(request, response, authentication);
+	        return;
+	    }
 
+	    request.getSession().setAttribute("userId", user.getId());
 
-        // ★ セッションに userId を保存
-        request.getSession().setAttribute("userId", user.getId());
-
-        super.onAuthenticationSuccess(request, response, authentication);
-    }
+	    super.onAuthenticationSuccess(request, response, authentication);
+	}
 }

@@ -3,13 +3,14 @@
 
 <head>
 	<div th:replace="~{fragment :: meta}"></div>
+
 	<div th:replace="~{fragment :: styles}"></div>
-	<title>カレンダー | SAMURAI Chat</title>
+
+	<title>SAMURAI Chat</title>
 </head>
 
 <body>
 	<div class="samuraichat-wrapper">
-
 		<div th:replace="~{fragment :: header}"></div>
 
 		<main>
@@ -22,13 +23,28 @@
 					<span th:text="${targetMonth.monthValue}"></span>月
 				</h2>
 
-				<div class="mb-3">
-					<a th:href="@{/calendar(year=${prevMonth.year}, month=${prevMonth.monthValue})}"
-						class="btn btn-outline-primary">前月</a>
+				<div class="d-flex justify-content-between align-items-center mb-3">
 
+					<!-- 前月 -->
+					<a th:href="@{/calendar(year=${prevMonth.year}, month=${prevMonth.monthValue})}"
+						class="btn btn-outline-primary">
+						前月
+					</a>
+
+					<!-- 今月へ（中央） -->
+					<a th:href="@{/calendar(year=${today.year}, month=${today.monthValue})}" class="btn btn-primary">
+						今月へ
+					</a>
+
+					<!-- 次月 -->
 					<a th:href="@{/calendar(year=${nextMonth.year}, month=${nextMonth.monthValue})}"
-						class="btn btn-outline-primary">次月</a>
+						class="btn btn-outline-primary">
+						次月
+					</a>
+
 				</div>
+				
+				<a href="/calendar/event/new" class="btn btn-success mb-3">新規予定を作成</a>
 
 				<!-- カレンダー本体 -->
 				<table class="calendar-table">
@@ -54,7 +70,11 @@
 								<!-- 予定一覧 -->
 								<div th:each="event : ${events}" th:if="${event.startDateString == day.toString()}"
 									class="event-item">
-									<span th:text="${event.summary}"></span>
+									
+									<a th:href="@{/calendar/event(id=${event.id})}" th:text="${event.summary}">
+									</a>
+
+									
 								</div>
 
 							</td>

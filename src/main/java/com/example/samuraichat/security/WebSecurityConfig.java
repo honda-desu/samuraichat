@@ -14,36 +14,47 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-	@Autowired
-	private LoginSuccessHandler loginSuccessHandler;
-	
+
+    @Autowired
+    private LoginSuccessHandler loginSuccessHandler;
+
+    @Autowired
+    private CustomOidcUserService customOAuth2UserService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
             .authorizeHttpRequests((requests) -> requests
-            	.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**").permitAll()  // すべてのユーザーにアクセスを許可するURL
-            	.requestMatchers("/admin/**").hasRole("ADMIN")  //管理者にのみアクセスを許可するURL
-            	.requestMatchers("/messages/**").hasAnyRole("ADMIN", "GENERAL") //管理者と会員のみアクセスを許可するURL
-                .anyRequest().authenticated()                   // 上記以外のURLはログインが必要（会員または管理者のどちらでもOK）
-            )
-            
-         // ★★★ ここが重要：OAuth2 ログインを有効化 ★★★
-            .oauth2Login(oauth -> oauth
-                .loginPage("/login")  // Googleログイン後に /login を経由してもOK
-                .defaultSuccessUrl("/?loggedIn")  // Googleログイン成功後の遷移先
+                .requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/messages/**").hasAnyRole("ADMIN", "GENERAL")
+                .anyRequest().authenticated()
             )
 
-            .formLogin((form) -> form
-                .loginPage("/login")              // ログインページのURL
+            // ★ Google OAuth ログイン設定（formLogin の外）
+            .oauth2Login(oauth -> oauth
+            	    .loginPage("/login")
+            	    .defaultSuccessUrl("/?loggedIn")
+            	    .userInfoEndpoint(userInfo -> userInfo
+            	        .oidcUserService(customOAuth2UserService)  // ← OIDC 用
+            	      
+            	    )
+            	)
+
+
+            // ★ フォームログイン設定（oauth2Login の外）
+            .formLogin(form -> form
+                .loginPage("/login")
                 .successHandler(loginSuccessHandler)
-                .loginProcessingUrl("/login")     // ログインフォームの送信先URL
-//                .defaultSuccessUrl("/?loggedIn")  // ログイン成功時のリダイレクト先URL
-                .failureUrl("/login?error")       // ログイン失敗時のリダイレクト先URL
+                .loginProcessingUrl("/login")
+                .failureUrl("/login?error")
                 .permitAll()
             )
-            .logout((logout) -> logout
-                .logoutSuccessUrl("/?loggedOut")  // ログアウト時のリダイレクト先URL
-                .permitAll()
+
+            .logout(logout -> logout
+            		.logoutSuccessUrl("/logout-switch")
+            	    .permitAll()
             );
 
         return http.build();

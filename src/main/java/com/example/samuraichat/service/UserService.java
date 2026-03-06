@@ -73,40 +73,36 @@ public class UserService {
 	
 	//プロフィールを編集する
 	@Transactional
-	public void updateProfile(String email, String name, String furigana, String profileText, MultipartFile profileImage) {
-		User user = userRepository.findByEmail(email);
-		
-		user.setName(name);
-		user.setFurigana(furigana);
-		user.setProfileText(profileText);
-		
-		//画像がアップロードされた場合のみ処理
-		if(!profileImage.isEmpty()) {
-			// 画像がアップロードされた場合のみ処理
-		    if (!profileImage.isEmpty()) {
-		        try {
-		            String fileName = UUID.randomUUID().toString() + "_" + profileImage.getOriginalFilename();
-		            Path uploadPath = Paths.get("uploads");
+	public User updateProfile(String email, String name, String furigana, String profileText, MultipartFile profileImage) {
 
-		            if (!Files.exists(uploadPath)) {
-		                Files.createDirectories(uploadPath);
-		            }
+	    User user = userRepository.findByEmail(email);
 
-		            Path filePath = uploadPath.resolve(fileName);
-		            Files.copy(profileImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+	    user.setName(name);
+	    user.setFurigana(furigana);
+	    user.setProfileText(profileText);
 
-		            // DB に保存するのはファイル名だけでOK
-		            user.setProfileImage(fileName);
+	    // 画像がアップロードされた場合のみ処理
+	    if (!profileImage.isEmpty()) {
+	        try {
+	            String fileName = UUID.randomUUID().toString() + "_" + profileImage.getOriginalFilename();
+	            Path uploadPath = Paths.get("uploads");
 
-		        } catch (IOException e) {
-		            throw new RuntimeException("画像の保存に失敗しました", e);
-		        }
-		    }
+	            if (!Files.exists(uploadPath)) {
+	                Files.createDirectories(uploadPath);
+	            }
 
-		}
-		
-		userRepository.save(user);
-				
+	            Path filePath = uploadPath.resolve(fileName);
+	            Files.copy(profileImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+	            user.setProfileImage(fileName);
+
+	        } catch (IOException e) {
+	            throw new RuntimeException("画像の保存に失敗しました", e);
+	        }
+	    }
+
+	    // ★ 更新後の User を返す
+	    return userRepository.save(user);
 	}
 	
 	public Page<User> getUserPage(int page) {

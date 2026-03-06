@@ -1,9 +1,9 @@
 package com.example.samuraichat.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +17,8 @@ import com.example.samuraichat.entity.ChatGroup;
 import com.example.samuraichat.entity.Favorite;
 import com.example.samuraichat.entity.Message;
 import com.example.samuraichat.entity.User;
+import com.example.samuraichat.repository.UserRepository;
+import com.example.samuraichat.security.CustomOAuth2User;
 import com.example.samuraichat.security.UserDetailsImpl;
 import com.example.samuraichat.service.ChatGroupService;
 import com.example.samuraichat.service.FavoriteService;
@@ -27,11 +29,31 @@ public class MessageController {
 	private final MessageService messageService;
 	private final ChatGroupService chatGroupService;
 	private final FavoriteService favoriteService;
+	private final UserRepository userRepository;
 	
-	public MessageController(MessageService messageService, ChatGroupService chatGroupService, FavoriteService favoriteService) {
+	private User extractUser(Object principal) {
+	    if (principal instanceof UserDetailsImpl userDetails) {
+	        return userDetails.getUser();
+	    }
+	    if (principal instanceof CustomOAuth2User oauthUser) {
+	        return oauthUser.getUser();
+	    }
+	    if (principal instanceof DefaultOidcUser oidcUser) {
+	        String email = oidcUser.getEmail(); // または getAttribute("email")
+	        User user = userRepository.findByEmail(email);
+	        if (user == null) {
+	            throw new IllegalStateException("Email に対応する User が存在しません: " + email);
+	        }
+	        return user;
+	    }
+	    throw new IllegalStateException("Unknown principal type: " + principal.getClass());
+	}
+	
+	public MessageController(MessageService messageService, ChatGroupService chatGroupService, FavoriteService favoriteService, UserRepository userRepository) {
 		this.messageService = messageService;
 		this.chatGroupService = chatGroupService;
 		this.favoriteService = favoriteService;
+		this.userRepository = userRepository;	
 	}
 	
 //	@GetMapping("/messages")
@@ -44,83 +66,83 @@ public class MessageController {
 //	}
 	
 	@PostMapping("/groups/{groupId}/messages/send")
-	public String sendMessage(@PathVariable("groupId") Integer groupId,
-	                          @RequestParam("content") String content,
-	                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+	public String sendMessage(
+	        @PathVariable("groupId") Integer groupId,
+	        @RequestParam("content") String content,
+	        @AuthenticationPrincipal Object principal) {
 
-	    User user = userDetails.getUser();
+	    User user = extractUser(principal);
 
-	    // グループIDに紐づくGroupエンティティを取得（存在チェック含む）
 	    ChatGroup group = chatGroupService.findById(groupId)
-	        .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
+	            .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
 
-	    // メッセージ保存（グループとユーザーを紐づけて）
 	    messageService.saveTextMessage(content, user, group);
 
-	    // グループのメッセージ一覧にリダイレクト
 	    return "redirect:/groups/" + groupId + "/messages";
 	}
 
 	
 	@GetMapping("/groups/{groupId}/messages")
-	public String showMessages(@PathVariable Integer groupId,
-			                   @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-			                   Model model) {
-		
-		List<Message> messages = messageService.getMessagesByGroupId(groupId);
-		Optional<ChatGroup> optionalChatGroup = chatGroupService.findById(groupId);
-		
-		ChatGroup chatGroup = optionalChatGroup.get();
-		Favorite favorite = null;
-		boolean isFavorite = false;
-		
-		if (userDetailsImpl != null) {
-			User user = userDetailsImpl.getUser();
-			isFavorite = favoriteService.isFavorite(chatGroup, user);
-			
-			if(isFavorite) {
-				favorite = favoriteService.findFavoriteByChatGroupAndUser(chatGroup, user);
-			}
-			
-		}
-		
-		model.addAttribute("messages", messages);
-		model.addAttribute("groupId", groupId);
-		model.addAttribute("favorite", favorite);
-		model.addAttribute("isFavorite", isFavorite);
-		model.addAttribute("chatGroup", chatGroup);
-		
-		return "message/list";
+	public String showMessages(
+	        @PathVariable Integer groupId,
+	        @AuthenticationPrincipal Object principal,
+	        Model model) {
+
+	    User user = null;
+	    if (principal != null) {
+	        user = extractUser(principal);
+	    }
+
+	    List<Message> messages = messageService.getMessagesByGroupId(groupId);
+	    ChatGroup chatGroup = chatGroupService.findById(groupId)
+	            .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
+
+	    boolean isFavorite = false;
+	    Favorite favorite = null;
+
+	    if (user != null) {
+	        isFavorite = favoriteService.isFavorite(chatGroup, user);
+	        if (isFavorite) {
+	            favorite = favoriteService.findFavoriteByChatGroupAndUser(chatGroup, user);
+	        }
+	    }
+
+	    model.addAttribute("messages", messages);
+	    model.addAttribute("groupId", groupId);
+	    model.addAttribute("favorite", favorite);
+	    model.addAttribute("isFavorite", isFavorite);
+	    model.addAttribute("chatGroup", chatGroup);
+
+	    return "message/list";
 	}
 	
 	@PostMapping("/groups/{groupId}/images/upload")
-	public String uploadImage(@PathVariable Integer groupId,
-	                          @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-	                          @RequestParam("imageFile") MultipartFile imageFile,
-	                          RedirectAttributes redirectAttributes) {
+	public String uploadImage(
+	        @PathVariable Integer groupId,
+	        @AuthenticationPrincipal Object principal,
+	        @RequestParam("imageFile") MultipartFile imageFile,
+	        RedirectAttributes redirectAttributes) {
 
 	    if (imageFile.isEmpty()) {
 	        redirectAttributes.addFlashAttribute("error", "画像ファイルが選択されていません。");
 	        return "redirect:/groups/" + groupId + "/messages";
 	    }
 
-	    User user = userDetailsImpl.getUser();
+	    User user = extractUser(principal);
+
 	    ChatGroup group = chatGroupService.findById(groupId)
-	        .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
+	            .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
 
 	    try {
-	        // ファイル名生成（UUID + 元ファイル名）
 	        String fileName = java.util.UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
 
-	     // 保存先パス（プロジェクトルート/uploads）
 	        String uploadRoot = System.getProperty("user.dir") + "/uploads";
 	        java.nio.file.Path uploadDir = java.nio.file.Paths.get(uploadRoot);
-	        java.nio.file.Files.createDirectories(uploadDir); // ディレクトリがなければ作成
+	        java.nio.file.Files.createDirectories(uploadDir);
 
 	        java.nio.file.Path filePath = uploadDir.resolve(fileName);
 	        imageFile.transferTo(filePath.toFile());
 
-	        // メッセージとして保存
 	        String imagePath = "/uploads/" + fileName;
 	        messageService.saveImageMessage(imagePath, user, group);
 
