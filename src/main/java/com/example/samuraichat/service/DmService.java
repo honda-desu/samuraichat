@@ -3,6 +3,7 @@ package com.example.samuraichat.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,6 +110,10 @@ public class DmService {
 
         // 自分が user2 の場合 → 相手は user1
         return room.getUser1();
+    }
+    
+    public List<DmRoom> getRecentRoomsForUser(Long userId, int limit) {
+        return dmRoomRepository.findRecentRooms(userId, PageRequest.of(0, limit));
     }
 
 

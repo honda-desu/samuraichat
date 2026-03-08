@@ -26,13 +26,58 @@
 				<div th:if="${successMessage}" class="alert alert-info">
 					<span th:text="${successMessage}"></span>
 				</div>
-				
+
 				<div>
-				<a href="/dm/self" class="btn btn-outline-secondary">自分とチャットする</a>
+					<a href="/dm/self" class="btn btn-outline-secondary">自分とチャットする</a>
 				</div>
-				
+
+				<h4>最近のDM</h4>
+
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">ルームID</th>
+							<th scope="col">相手ユーザー</th>
+							<th scope="col">最終メッセージ</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr th:each="room : ${recentDms}">
+							<!-- ルームID -->
+							<td th:text="${room.id}"></td>
+
+							<!-- 相手ユーザー名 -->
+							<td>
+								<a th:href="@{/dm/chat/{roomId}(roomId=${room.id})}"
+									th:text="${room.user1.id == session.userId ? room.user2.name : room.user1.name}">
+								</a>
+							</td>
+
+							<!-- 最終メッセージ -->
+							<td
+								th:text="${#lists.isEmpty(room.messages) ? '' : room.messages.get(room.messages.size() - 1).content}">
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<a href="/dm/list" class="btn btn-outline-secondary btn-sm">もっと見る</a>
+
+				<div>
+					<a href="/groups" class="btn btn-outline-secondary">チャットグループ一覧へ</a>
+				</div>
+
+				<div>
+					<a href="/favorites" class="btn btn-outline-secondary">お気に入りチャットグループ一覧へ</a>
+				</div>
+
+				<div>
+					<a href="/calendar" class="btn btn-outline-secondary">カレンダーへ</a>
+				</div>
+
 			</div>
-			
+
 		</main>
 
 		<div th:replace="~{fragment :: footer}"></div>
