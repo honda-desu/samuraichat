@@ -58,10 +58,22 @@ public class DmController {
     }
 
     @GetMapping("/chat/{roomId}")
-    public String chat(@PathVariable Long roomId, Model model) {
+    public String chat(@PathVariable Long roomId, @AuthenticationPrincipal Object principal, Model model) {
+    	
+    	User me = extractUser(principal);
 
         model.addAttribute("roomId", roomId);
         model.addAttribute("messages", dmService.getMessages(roomId));
+        
+     // ★ 相手ユーザーを取得して渡す
+        User partner = dmService.getPartnerUser(roomId, me.getId());
+        model.addAttribute("partner", partner);
+        
+     // ★ 自分チャットかどうか判定
+        boolean isSelfChat = partner.getId().equals(me.getId());
+        model.addAttribute("isSelfChat", isSelfChat);
+        
+        
 
         return "dm/chat";
     }
@@ -129,4 +141,15 @@ public class DmController {
 
         return "redirect:/dm/chat/" + roomId;
     }
+    
+    @GetMapping("/self")
+    public String selfChat(@AuthenticationPrincipal Object principal) {
+        User me = extractUser(principal);
+        Long myId = me.getId();
+
+        var room = dmService.getOrCreateRoom(myId, myId);
+
+        return "redirect:/dm/chat/" + room.getId();
+    }
+
 }

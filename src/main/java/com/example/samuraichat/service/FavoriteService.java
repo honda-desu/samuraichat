@@ -59,5 +59,9 @@ public class FavoriteService {
 	public boolean isFavorite(ChatGroup chatGroup, User user) {
 		return favoriteRepository.findByChatGroupAndUser(chatGroup, user) != null;
 	}
+	
+	
+	
+	
 
 }

@@ -31,5 +31,6 @@ public class Favorite {
 	
 	@Column(name = "favorited_at", insertable = false, updatable = false)
 	private Timestamp favoritedAt;
-
+	
+	
 }

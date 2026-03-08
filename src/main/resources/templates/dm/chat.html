@@ -27,6 +27,10 @@
 		<main>
 			<div class="container">
 				<div class="samuraichat-container">
+					<div class="chat-header">
+						<h3 th:text="${isSelfChat} ? 'マイチャット' : ${partner.name}"></h3>
+					</div>
+
 
 					<!-- ★ メッセージ一覧 ★ -->
 					<div class="chat-container">
@@ -69,12 +73,13 @@
 						</form>
 
 						<!-- 画像投稿フォーム（必要なら） -->
-						<form class="image-upload-form" th:action="@{'/dm/' + (${roomId}) + '/images/upload'}" method="post"
-							enctype="multipart/form-data">
+						<form class="image-upload-form" th:action="@{'/dm/' + (${roomId}) + '/images/upload'}"
+							method="post" enctype="multipart/form-data">
 							<input type="hidden" name="roomId" th:value="${roomId}">
 							<input type="file" name="imageFile" accept="image/*">
 							<button type="submit" class="btn btn-outline-success">画像を投稿</button>
 						</form>
+						
 					</div>
 
 				</div>

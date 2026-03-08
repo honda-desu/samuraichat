@@ -33,6 +33,10 @@
 		<main>
 			<div class="container">
 				<div class="samuraichat-container">
+					<div class="chat-header text-center mb-3">
+						<h3 th:text="${chatGroup.name}"></h3>
+					</div>
+
 
 					<div class="chat-container">
 						<div th:each="msg : ${messages}" class="message">
@@ -43,7 +47,7 @@
 								th:data-name="${msg.user.name}" th:data-text="${msg.user.profileText}"
 								th:data-image="@{'/uploads/' + ${msg.user.profileImage}}"
 								th:data-user-id="${msg.user.id}" onclick="openProfileModal(this)">
-							
+
 
 
 							<!-- プロフィール画像なし -->

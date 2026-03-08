@@ -2,53 +2,95 @@
 <html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-	<div th:replace="~{fragment :: meta}"></div>
-
-	<div th:replace="~{fragment :: styles}"></div>
-
-	<title>SAMURAI Chat</title>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>プロフィール編集 | SAMURAI Chat</title>
 </head>
 
 <body>
-	<div class="samuraichat-wrapper">
-		<div th:replace="~{fragment :: header}"></div>
+<div class="samuraichat-wrapper">
+    <div th:replace="~{fragment :: header}"></div>
 
-		<main>
-			<div class="container-fluid pt-4 pb-5 samuraichat-container">
-				<h1>プロフィール編集</h1>
+    <main>
+        <div class="container pt-4 pb-5 samuraichat-container">
 
-				<form th:action="@{/mypage/edit}" method="post" enctype="multipart/form-data">
-					<div>
-						<label>プロフィール画像</label>
-						<input type="file" name="profileImage">
-					</div>
-					
-					<div>
-						<label>名前</label><br>
-						<input type="text" name="name" th:value="${user.name}">
-					</div>
+            <h1 class="text-center mb-4">プロフィール編集</h1>
 
-					<div>
-						<label>ふりがな</label><br>
-						<input type="text" name="furigana" th:value="${user.furigana}">
-					</div>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
 
-					<div>
-						<label>プロフィール文</label><br>
-						<textarea name="profileText" rows="5" cols="40" th:text="${user.profileText}"></textarea>
-					</div>
+                    <!-- 編集カード -->
+                    <div class="card shadow-sm p-4">
 
-					<button type="submit">更新する</button>
-				</form>
+                        <!-- プロフィール画像プレビュー -->
+                        <div class="text-center mb-4">
+                            <img th:if="${user.profileImage != null}"
+                                 th:src="@{'/uploads/' + ${user.profileImage}}"
+                                 alt="プロフィール画像"
+                                 id="previewImage"
+                                 class="rounded-circle"
+                                 style="width:150px; height:150px; object-fit:cover;">
 
-			</div>
+                            <img th:if="${user.profileImage == null}"
+                                 th:src="@{/images/noimage.png}"
+                                 alt="プロフィール画像"
+                                 id="previewImage"
+                                 class="rounded-circle"
+                                 style="width:150px; height:150px; object-fit:cover;">
+                        </div>
 
-		</main>
+                        <!-- 編集フォーム -->
+                        <form th:action="@{/mypage/edit}" method="post" enctype="multipart/form-data">
 
-		<div th:replace="~{fragment :: footer}"></div>
-	</div>
+                            <div class="mb-3">
+                                <label class="form-label">プロフィール画像</label>
+                                <input type="file" name="profileImage" class="form-control" onchange="previewFile(event)">
+                            </div>
 
-	<div th:replace="~{fragment :: scripts}"></div>
+                            <div class="mb-3">
+                                <label class="form-label">名前</label>
+                                <input type="text" name="name" class="form-control" th:value="${user.name}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">ふりがな</label>
+                                <input type="text" name="furigana" class="form-control" th:value="${user.furigana}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">プロフィール文</label>
+                                <textarea name="profileText" rows="5" class="form-control"
+                                          th:text="${user.profileText}"></textarea>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">更新する</button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragment :: footer}"></div>
+</div>
+
+<div th:replace="~{fragment :: scripts}"></div>
+
+<!-- 画像プレビュー用スクリプト -->
+<script>
+    function previewFile(event) {
+        const reader = new FileReader();
+        reader.onload = function(){
+            document.getElementById('previewImage').src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+
 </body>
-
 </html>

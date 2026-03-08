@@ -11,6 +11,7 @@ import com.example.samuraichat.entity.User;
 public interface FavoriteRepository extends JpaRepository<Favorite, Integer>{
 	public Favorite findByChatGroupAndUser(ChatGroup chatGroup, User user);
 	
+	
 	public Page<Favorite> findByUserOrderByFavoritedAtDesc(User user, Pageable pageable);
 	
 }

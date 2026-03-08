@@ -96,6 +96,21 @@ public class DmService {
         return dmRoomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("指定されたDMルームが存在しません"));
     }
+    
+    public User getPartnerUser(Long roomId, Long myId) {
+
+        DmRoom room = dmRoomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+
+        // 自分が user1 の場合 → 相手は user2
+        if (room.getUser1().getId().equals(myId)) {
+            return room.getUser2();
+        }
+
+        // 自分が user2 の場合 → 相手は user1
+        return room.getUser1();
+    }
+
 
 
 }
