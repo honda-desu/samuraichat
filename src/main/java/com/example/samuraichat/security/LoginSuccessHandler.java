@@ -15,26 +15,29 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request,
-	                                    HttpServletResponse response,
-	                                    Authentication authentication)
-	                                    throws IOException, ServletException {
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication)
+            throws IOException, ServletException {
 
-	    Object principal = authentication.getPrincipal();
-	    User user;
+        Object principal = authentication.getPrincipal();
+        User user;
 
-	    if (principal instanceof UserDetailsImpl userDetails) {
-	        user = userDetails.getUser();
-	    } else if (principal instanceof CustomOAuth2User oauthUser) {
-	        user = oauthUser.getUser();
-	    } else {
-	        super.onAuthenticationSuccess(request, response, authentication);
-	        return;
-	    }
+        if (principal instanceof UserDetailsImpl userDetails) {
+            user = userDetails.getUser();
+        } else if (principal instanceof CustomOAuth2User oauthUser) {
+            user = oauthUser.getUser();
+        } else {
+            // 想定外の principal の場合は "/" に飛ばす
+            response.sendRedirect("/");
+            return;
+        }
 
-	    request.getSession().setAttribute("userId", user.getId());
+        // セッションに userId を保存
+        request.getSession().setAttribute("userId", user.getId());
 
-	    super.onAuthenticationSuccess(request, response, authentication);
-	}
+        // ★ SavedRequest を無視して "/" に強制リダイレクト
+        response.sendRedirect("/?loggedIn");
+    }
 }

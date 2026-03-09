@@ -1,8 +1,10 @@
 package com.example.samuraichat.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,12 @@ public class ChatGroupService {
 	@Transactional
 	public void delete(ChatGroup chatGroup) {
 		chatGroupRepository.delete(chatGroup);
+	}
+	
+	//ホーム画面に新着メッセージが入った順
+	public List<ChatGroup> findRecentGroups(int limit) {
+	    Pageable pageable = PageRequest.of(0, limit);
+	    return chatGroupRepository.findRecentGroups(pageable);
 	}
 	
 }

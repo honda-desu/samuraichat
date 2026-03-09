@@ -3,9 +3,7 @@
 
 <head>
 	<div th:replace="~{fragment :: meta}"></div>
-
 	<div th:replace="~{fragment :: styles}"></div>
-
 	<title>SAMURAI Chat</title>
 </head>
 
@@ -15,69 +13,116 @@
 
 		<main>
 			<div class="container-fluid pt-4 pb-5 samuraichat-container">
-				<div th:if="${param.loggedIn}" class="alert alert-info">
-					ログインしました。
-				</div>
 
-				<div th:if="${param.loggedOut}" class="alert alert-info">
-					ログアウトしました。
-				</div>
-
+				<!-- アラート -->
+				<div th:if="${param.loggedIn}" class="alert alert-info">ログインしました。</div>
+				<div th:if="${param.loggedOut}" class="alert alert-info">ログアウトしました。</div>
 				<div th:if="${successMessage}" class="alert alert-info">
 					<span th:text="${successMessage}"></span>
 				</div>
 
-				<div>
-					<a href="/dm/self" class="btn btn-outline-secondary">自分とチャットする</a>
+				<!-- 自分とチャットする -->
+				<div class="mb-4">
+					<a href="/dm/self" class="btn btn-outline-secondary btn-lg w-100 py-3 fw-bold">
+						自分とチャットする
+					</a>
 				</div>
 
-				<h4>最近のDM</h4>
+				<!-- 最近のDM -->
+				<section class="mb-5">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h4 class="mb-0">最近のDM</h4>
+					</div>
 
-				<table class="table">
-					<thead>
-						<tr>
-							<th scope="col">ルームID</th>
-							<th scope="col">相手ユーザー</th>
-							<th scope="col">最終メッセージ</th>
-						</tr>
-					</thead>
+					<table class="table table-hover align-middle">
+						<thead class="table-light">
+							<tr>
+								<th scope="col">相手ユーザー</th>
+								<th scope="col">最終メッセージ</th>
+							</tr>
+						</thead>
 
-					<tbody>
-						<tr th:each="room : ${recentDms}">
-							<!-- ルームID -->
-							<td th:text="${room.id}"></td>
+						<tbody>
+							<tr th:each="room : ${recentDms}">
+								<td>
+									<a th:href="@{/dm/chat/{roomId}(roomId=${room.id})}"
+										th:text="${room.user1.id == session.userId ? room.user2.name : room.user1.name}">
+									</a>
+								</td>
+								<td th:text="${#lists.isEmpty(room.messages) ? '' :
+                                      room.messages.get(room.messages.size() - 1).content}">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
 
-							<!-- 相手ユーザー名 -->
-							<td>
-								<a th:href="@{/dm/chat/{roomId}(roomId=${room.id})}"
-									th:text="${room.user1.id == session.userId ? room.user2.name : room.user1.name}">
-								</a>
-							</td>
+				<!-- 最近のグループチャット -->
+				<section class="mb-5">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h4 class="mb-0">最近のグループチャット</h4>
+						<a href="/groups" class="btn btn-outline-secondary btn-sm">もっと見る</a>
+					</div>
 
-							<!-- 最終メッセージ -->
-							<td
-								th:text="${#lists.isEmpty(room.messages) ? '' : room.messages.get(room.messages.size() - 1).content}">
-							</td>
-						</tr>
-					</tbody>
-				</table>
+					<table class="table table-hover align-middle">
+						<thead class="table-light">
+							<tr>
+								<th>グループ名</th>
+								<th>最終メッセージ</th>
+							</tr>
+						</thead>
 
-				<a href="/dm/list" class="btn btn-outline-secondary btn-sm">もっと見る</a>
+						<tbody>
+							<tr th:each="group : ${recentGroups}">
+								<td>
+									<a th:href="@{/groups/{id}/messages(id=${group.id})}" th:text="${group.name}">
+									</a>
+								</td>
+								<td th:text="${#lists.isEmpty(group.messages) ? '' :
+                                      group.messages.get(group.messages.size() - 1).content}">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
 
-				<div>
-					<a href="/groups" class="btn btn-outline-secondary">チャットグループ一覧へ</a>
+				<!-- お気に入りグループ -->
+				<section class="mb-5">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h4 class="mb-0">お気に入りグループ（最近の更新）</h4>
+						<a href="/favorites" class="btn btn-outline-secondary btn-sm">もっと見る</a>
+					</div>
+
+					<table class="table table-hover align-middle">
+						<thead class="table-light">
+							<tr>
+								<th>グループ名</th>
+								<th>最終メッセージ</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr th:each="fav : ${recentFavoriteGroups}">
+								<td>
+									<a th:href="@{/groups/{id}/messages(id=${fav.chatGroup.id})}"
+										th:text="${fav.chatGroup.name}">
+									</a>
+								</td>
+								<td th:text="${#lists.isEmpty(fav.chatGroup.messages) ? '' :
+                                      fav.chatGroup.messages.get(fav.chatGroup.messages.size() - 1).content}">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+
+				<!-- カレンダーへ -->
+				<div class="mt-4">
+					<a href="/calendar" class="btn btn-outline-secondary btn-lg w-100 py-3 fw-bold">
+						カレンダーへ
+					</a>
 				</div>
-
-				<div>
-					<a href="/favorites" class="btn btn-outline-secondary">お気に入りチャットグループ一覧へ</a>
-				</div>
-
-				<div>
-					<a href="/calendar" class="btn btn-outline-secondary">カレンダーへ</a>
-				</div>
-
 			</div>
-
 		</main>
 
 		<div th:replace="~{fragment :: footer}"></div>
