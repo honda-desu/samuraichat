@@ -3,6 +3,7 @@ package com.example.samuraichat.controller;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import com.example.samuraichat.entity.DmRoom;
 import com.example.samuraichat.entity.User;
 import com.example.samuraichat.security.CustomOAuth2User;
 import com.example.samuraichat.security.UserDetailsImpl;
+import com.example.samuraichat.service.BlockAndReportService;
 import com.example.samuraichat.service.DmService;
 
 import jakarta.servlet.http.HttpSession;
@@ -29,9 +31,11 @@ import jakarta.servlet.http.HttpSession;
 public class DmController {
 
     private final DmService dmService;
+    private final BlockAndReportService blockAndReportService;
 
-    public DmController(DmService dmService) {
+    public DmController(DmService dmService, BlockAndReportService blockAndReportService) {
         this.dmService = dmService;
+        this.blockAndReportService = blockAndReportService;
     }
 
     // ★ principal から User を取り出す共通メソッド
@@ -73,6 +77,10 @@ public class DmController {
         boolean isSelfChat = partner.getId().equals(me.getId());
         model.addAttribute("isSelfChat", isSelfChat);
         
+     // ★ ブロックしているかどうか判定（← これが重要）
+        boolean isBlocked = blockAndReportService.isBlocked(me.getId(), partner.getId());
+        model.addAttribute("isBlocked", isBlocked);
+
         
 
         return "dm/chat";
@@ -81,12 +89,19 @@ public class DmController {
     @PostMapping("/send")
     public String sendMessage(@RequestParam Long roomId,
                               @RequestParam String content,
-                              @AuthenticationPrincipal Object principal) {
+                              @AuthenticationPrincipal Object principal,
+                              RedirectAttributes redirectAttributes) {
 
         User me = extractUser(principal);
         Long senderId = me.getId();
 
-        dmService.sendMessage(roomId, senderId, content, null);
+        try {
+            dmService.sendMessage(roomId, senderId, content, null);
+        } catch (IllegalStateException e) {
+            // ★ ブロックされている場合などのエラーをDM画面に表示
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
 
         return "redirect:/dm/chat/" + roomId;
     }
@@ -99,7 +114,26 @@ public class DmController {
         
         session.setAttribute("userId", myId);
 
-        model.addAttribute("rooms", dmService.getRoomsForUser(myId));
+        // ★ 自分の DM ルーム一覧を取得
+        List<DmRoom> rooms = dmService.getRoomsForUser(myId);
+
+        // ★ 各ルームごとに「相手がブロックされているか」を判定してセット
+        for (DmRoom room : rooms) {
+
+            // 相手ユーザーIDを取得
+            Long partnerId = room.getUser1().getId().equals(myId)
+                    ? room.getUser2().getId()
+                    : room.getUser1().getId();
+
+            // ブロック状態を取得
+            boolean isBlocked = blockAndReportService.isBlocked(myId, partnerId);
+
+            // DmRoom の transient フィールドにセット
+            room.setBlocked(isBlocked);
+        }
+
+        // ★ Thymeleaf に渡す
+        model.addAttribute("rooms", rooms);
 
         return "dm/list";
     }

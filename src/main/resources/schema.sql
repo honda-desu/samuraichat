@@ -104,3 +104,30 @@ ALTER TABLE dm_message
 ALTER TABLE dm_message
     ADD CONSTRAINT fk_dmmessage_sender FOREIGN KEY (sender_id) REFERENCES users(id);
 );
+
+ALTER TABLE dm_message
+    ADD COLUMN is_read BOOLEAN NOT NULL DEFAULT FALSE;
+
+CREATE TABLE IF NOT EXISTS blocks (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    blocker_id INT NOT NULL,
+    blocked_user_id INT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_blocks_blocker FOREIGN KEY (blocker_id) REFERENCES users(id),
+    CONSTRAINT fk_blocks_blocked FOREIGN KEY (blocked_user_id) REFERENCES users(id),
+
+    UNIQUE(blocker_id, blocked_user_id)
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    reporter_id INT NOT NULL,
+    target_user_id INT NOT NULL,
+    reason VARCHAR(255) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_reports_reporter FOREIGN KEY (reporter_id) REFERENCES users(id),
+    CONSTRAINT fk_reports_target FOREIGN KEY (target_user_id) REFERENCES users(id)
+);

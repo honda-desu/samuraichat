@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.samuraichat.entity.DmMessage;
 import com.example.samuraichat.entity.DmRoom;
 import com.example.samuraichat.entity.User;
+import com.example.samuraichat.repository.BlockRepository;
 import com.example.samuraichat.repository.DmMessageRepository;
 import com.example.samuraichat.repository.DmRoomRepository;
 import com.example.samuraichat.repository.UserRepository;
@@ -21,11 +22,13 @@ public class DmService {
 	private final DmRoomRepository dmRoomRepository;
 	private final DmMessageRepository dmMessageRepository;
 	private final UserRepository userRepository;
+	private final BlockRepository blockRepository;
 	
-	public DmService(DmRoomRepository dmRoomRepository, DmMessageRepository dmMessageRepository, UserRepository userRepository) {
+	public DmService(DmRoomRepository dmRoomRepository, DmMessageRepository dmMessageRepository, UserRepository userRepository, BlockRepository blockRepository) {
 		this.dmRoomRepository = dmRoomRepository;
 		this.dmMessageRepository = dmMessageRepository;
 		this.userRepository = userRepository;
+		this.blockRepository = blockRepository;
 	}
 	
 	//DmRoomを取得または作成
@@ -74,6 +77,21 @@ public class DmService {
 		User sender = userRepository.findById(senderId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
+		// ★ 相手ユーザーを特定
+        Long user1 = room.getUser1().getId();
+        Long user2 = room.getUser2().getId();
+        Long receiverId = user1.equals(senderId) ? user2 : user1;
+
+        // ★ ブロックチェック（相手 → 自分）
+        if (blockRepository.existsByBlockerIdAndBlockedUserId(receiverId, senderId)) {
+            throw new IllegalStateException("相手にブロックされているため、メッセージを送信できません。");
+        }
+
+        // ★ ブロックチェック（自分 → 相手）
+        if (blockRepository.existsByBlockerIdAndBlockedUserId(senderId, receiverId)) {
+            throw new IllegalStateException("ブロック中のユーザーにはメッセージを送信できません。");
+        }
+
 		DmMessage message  = new DmMessage();
 		message.setRoom(room);
 		message.setSender(sender);

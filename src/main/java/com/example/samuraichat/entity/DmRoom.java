@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,5 +42,8 @@ public class DmRoom {
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Timestamp createdAt;
 	
-	
+	// ★ 追加：ブロック状態（DBには保存しない）
+    @Transient
+    private boolean blocked;
+
 }

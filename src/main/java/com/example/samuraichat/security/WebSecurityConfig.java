@@ -35,7 +35,7 @@ public class WebSecurityConfig {
             // ★ Google OAuth ログイン設定（formLogin の外）
             .oauth2Login(oauth -> oauth
             	    .loginPage("/login")
-            	    .defaultSuccessUrl("/?loggedIn")
+            	    .successHandler(loginSuccessHandler)
             	    .userInfoEndpoint(userInfo -> userInfo
             	        .oidcUserService(customOAuth2UserService)  // ← OIDC 用
             	      

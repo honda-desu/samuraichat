@@ -29,6 +29,29 @@
 				<div class="samuraichat-container">
 					<div class="chat-header">
 						<h3 th:text="${isSelfChat} ? 'マイチャット' : ${partner.name}"></h3>
+						<!-- ★ 自分自身のチャットではブロックボタンを非表示ブロックボタン -->
+						<div th:if="${!isSelfChat}">
+							<!-- ★ ブロックしていない場合：ブロックボタン -->
+							<a th:if="${!isBlocked}"
+								th:href="@{'/block/' + ${partner.id} + '/reason?roomId=' + ${roomId}}"
+								class="btn btn-danger btn-sm" style="margin-left: 10px;">
+								ブロック
+							</a>
+
+							<!-- ★ ブロックしている場合：解除ボタン -->
+							<a th:if="${isBlocked}"
+								th:href="@{'/block/' + ${partner.id} + '/unblock?roomId=' + ${roomId}}"
+								class="btn btn-outline-secondary btn-sm" style="margin-left: 10px;">
+								ブロック解除
+							</a>
+
+						</div>
+
+						<div th:if="${errorMessage}" class="alert alert-danger">
+							<span th:text="${errorMessage}"></span>
+						</div>
+
+
 					</div>
 
 
@@ -79,7 +102,7 @@
 							<input type="file" name="imageFile" accept="image/*">
 							<button type="submit" class="btn btn-outline-success">画像を投稿</button>
 						</form>
-						
+
 					</div>
 
 				</div>

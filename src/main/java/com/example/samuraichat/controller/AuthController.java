@@ -1,6 +1,5 @@
 package com.example.samuraichat.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,7 +15,6 @@ import com.example.samuraichat.entity.User;
 import com.example.samuraichat.entity.VerificationToken;
 import com.example.samuraichat.event.SignupEventPublisher;
 import com.example.samuraichat.form.SignupForm;
-import com.example.samuraichat.security.CustomOAuth2User;
 import com.example.samuraichat.service.UserService;
 import com.example.samuraichat.service.VerificationTokenService;
 
@@ -96,16 +94,9 @@ public class AuthController {
     }    
 	
 	@GetMapping("/logout-switch")
-    public String logoutSwitch(@AuthenticationPrincipal Object principal) {
-
-        // Google ログインの場合
-        if (principal instanceof CustomOAuth2User) {
-            return "redirect:https://accounts.google.com/Logout";
-        }
-
-        // フォームログインの場合
-        return "redirect:/login?loggedOut";
-    }
+	public String logoutSwitch() {
+	    return "redirect:/login?loggedOut";
+	}
 
 
 }
