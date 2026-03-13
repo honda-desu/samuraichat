@@ -67,7 +67,7 @@ public class MessageController {
 	
 	@PostMapping("/groups/{groupId}/messages/send")
 	public String sendMessage(
-	        @PathVariable("groupId") Integer groupId,
+	        @PathVariable("groupId") Long groupId,
 	        @RequestParam("content") String content,
 	        @AuthenticationPrincipal Object principal) {
 
@@ -84,7 +84,7 @@ public class MessageController {
 	
 	@GetMapping("/groups/{groupId}/messages")
 	public String showMessages(
-	        @PathVariable Integer groupId,
+	        @PathVariable Long groupId,
 	        @AuthenticationPrincipal Object principal,
 	        Model model) {
 
@@ -96,6 +96,12 @@ public class MessageController {
 	    List<Message> messages = messageService.getMessagesByGroupId(groupId);
 	    ChatGroup chatGroup = chatGroupService.findById(groupId)
 	            .orElseThrow(() -> new IllegalArgumentException("指定されたグループが存在しません"));
+	    
+	 // ★未読 → 既読処理 ★★★
+	    if (user != null) {
+	        messageService.markGroupMessagesAsRead(groupId, user.getId());
+	    }
+
 
 	    boolean isFavorite = false;
 	    Favorite favorite = null;
@@ -118,7 +124,7 @@ public class MessageController {
 	
 	@PostMapping("/groups/{groupId}/images/upload")
 	public String uploadImage(
-	        @PathVariable Integer groupId,
+	        @PathVariable Long groupId,
 	        @AuthenticationPrincipal Object principal,
 	        @RequestParam("imageFile") MultipartFile imageFile,
 	        RedirectAttributes redirectAttributes) {

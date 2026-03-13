@@ -43,7 +43,8 @@ public class FavoriteService {
 	}
 	
 	//Home画面用の新着メッセージ順のメソッド追加
-	public List<Favorite> findRecentFavoriteGroups(User user, int limit) {
+	// Home画面用：お気に入りグループを「最新メッセージ順」で取得
+	public List<ChatGroup> findRecentFavoriteGroups(User user, int limit) {
 	    Pageable pageable = PageRequest.of(0, limit);
 	    return favoriteRepository.findRecentFavoriteGroups(user.getId(), pageable);
 	}

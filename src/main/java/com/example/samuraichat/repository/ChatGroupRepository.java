@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.example.samuraichat.entity.ChatGroup;
 
-public interface ChatGroupRepository extends JpaRepository<ChatGroup, Integer>{
+public interface ChatGroupRepository extends JpaRepository<ChatGroup, Long>{
 	
 	//Home画面に必要な新着メッセージが入った順のクエリ
 	@Query("""

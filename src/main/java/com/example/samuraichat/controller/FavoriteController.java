@@ -21,6 +21,7 @@ import com.example.samuraichat.security.CustomOAuth2User;
 import com.example.samuraichat.security.UserDetailsImpl;
 import com.example.samuraichat.service.ChatGroupService;
 import com.example.samuraichat.service.FavoriteService;
+import com.example.samuraichat.service.MessageService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -29,10 +30,12 @@ public class FavoriteController {
 
     private final ChatGroupService chatGroupService;
     private final FavoriteService favoriteService;
+    private final MessageService messageService;
 
-    public FavoriteController(ChatGroupService chatGroupService, FavoriteService favoriteService) {
+    public FavoriteController(ChatGroupService chatGroupService, FavoriteService favoriteService, MessageService messageService) {
         this.chatGroupService = chatGroupService;
         this.favoriteService = favoriteService;
+        this.messageService = messageService;
     }
 
     // ★ principal から User を取り出す共通メソッド
@@ -54,8 +57,16 @@ public class FavoriteController {
             Model model) {
 
         User user = extractUser(principal);
+        Long myId = user.getId();
 
         Page<Favorite> favoritePage = favoriteService.findFavoritesByUserOrderByCreatedAtDesc(user, pageable);
+
+        // ★★★ 各お気に入りの ChatGroup に未読数をセット（重要）★★★
+        for (Favorite favorite : favoritePage.getContent()) {
+            ChatGroup group = favorite.getChatGroup();
+            int unread = messageService.getUnreadCount(group.getId(), myId);
+            group.setUnreadCount(unread);
+        }
 
         model.addAttribute("favoritePage", favoritePage);
 
@@ -64,7 +75,7 @@ public class FavoriteController {
 
     @PostMapping("/groups/{groupId}/favorites/create")
     public String create(
-            @PathVariable(name = "groupId") Integer groupId,
+            @PathVariable(name = "groupId") Long groupId,
             @AuthenticationPrincipal Object principal,
             RedirectAttributes redirectAttributes,
             Model model) {

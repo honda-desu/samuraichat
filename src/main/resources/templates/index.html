@@ -48,6 +48,12 @@
 									<a th:href="@{/dm/chat/{roomId}(roomId=${room.id})}"
 										th:text="${room.user1.id == session.userId ? room.user2.name : room.user1.name}">
 									</a>
+									<!-- ★ 未読がある場合は「!」を表示 -->
+									<span th:if="${room.unreadCount > 0}" class="badge bg-danger"
+										style="margin-left: 6px;">
+										!
+									</span>
+
 								</td>
 								<td th:text="${#lists.isEmpty(room.messages) ? '' :
                                       room.messages.get(room.messages.size() - 1).content}">
@@ -77,6 +83,7 @@
 								<td>
 									<a th:href="@{/groups/{id}/messages(id=${group.id})}" th:text="${group.name}">
 									</a>
+									<span th:if="${group.unreadCount > 0}" class="badge bg-danger">!</span>
 								</td>
 								<td th:text="${#lists.isEmpty(group.messages) ? '' :
                                       group.messages.get(group.messages.size() - 1).content}">
@@ -104,12 +111,15 @@
 						<tbody>
 							<tr th:each="fav : ${recentFavoriteGroups}">
 								<td>
-									<a th:href="@{/groups/{id}/messages(id=${fav.chatGroup.id})}"
-										th:text="${fav.chatGroup.name}">
+									<a th:href="@{/groups/{id}/messages(id=${fav.id})}" th:text="${fav.name}">
 									</a>
+
+									<!-- 未読バッジ -->
+									<span th:if="${fav.unreadCount > 0}" class="badge bg-danger">!</span>
 								</td>
-								<td th:text="${#lists.isEmpty(fav.chatGroup.messages) ? '' :
-                                      fav.chatGroup.messages.get(fav.chatGroup.messages.size() - 1).content}">
+
+								<td th:text="${#lists.isEmpty(fav.messages) ? '' :
+                  fav.messages.get(fav.messages.size() - 1).content}">
 								</td>
 							</tr>
 						</tbody>

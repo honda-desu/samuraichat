@@ -25,7 +25,7 @@ public class ChatGroupService {
 		return chatGroupRepository.findAll(pageable);
 	}
 	
-	public Optional<ChatGroup> findById(Integer groupId){
+	public Optional<ChatGroup> findById(Long groupId){
 		return chatGroupRepository.findById(groupId);
 	}
 	

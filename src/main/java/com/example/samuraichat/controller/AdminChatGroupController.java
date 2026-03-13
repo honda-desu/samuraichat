@@ -36,7 +36,7 @@ public class AdminChatGroupController {
 	}
 	
 	@PostMapping("/{id}/delete")
-	public String delete(@PathVariable(name = "id") Integer groupId, RedirectAttributes redirectAttributes) {
+	public String delete(@PathVariable(name = "id") Long groupId, RedirectAttributes redirectAttributes) {
 		Optional<ChatGroup> optionalChatGroup = chatGroupService.findById(groupId);
 		
 		if(optionalChatGroup.isEmpty()) {

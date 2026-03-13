@@ -36,6 +36,10 @@
 									<td>
 										<a th:href="@{/groups/{groupId}/messages(groupId=${favorite.chatGroup.id})}"
 											th:text="${favorite.chatGroup.name}"></a>
+
+										<!-- ★ 未読バッジ -->
+										<span th:if="${favorite.chatGroup.unreadCount > 0}"
+											class="badge bg-danger">!</span>
 									</td>
 									<td>
 										<form th:action="@{/favorites/{favoriteId}/delete(favoriteId=${favorite.id})}"

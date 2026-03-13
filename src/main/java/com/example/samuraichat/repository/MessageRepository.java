@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.samuraichat.entity.Message;
 
-public interface MessageRepository extends JpaRepository<Message, Integer>{	
+public interface MessageRepository extends JpaRepository<Message, Long>{	
 	@Query("SELECT m FROM Message m JOIN FETCH m.user WHERE m.chatGroup.id = :chatGroupId ORDER BY m.createdAt ASC")
-	List<Message> findByChatGroupIdOrderByCreatedAtAsc(@Param("chatGroupId") Integer chatGroupId);
+	List<Message> findByChatGroupIdOrderByCreatedAtAsc(@Param("chatGroupId") Long chatGroupId);
 }

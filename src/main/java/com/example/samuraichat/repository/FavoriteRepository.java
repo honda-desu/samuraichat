@@ -19,13 +19,16 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Integer>{
 	
 	//「お気に入りの中から、グループの最新メッセージ順に並べるクエリ
 	@Query("""
-			SELECT f FROM Favorite f
-			WHERE f.user.id = :userId
-			ORDER BY (
-			    SELECT MAX(m.createdAt)
-			    FROM Message m
-			    WHERE m.chatGroup.id = f.chatGroup.id
-			) DESC
-			""")
-			List<Favorite> findRecentFavoriteGroups(@Param("userId") Long userId, Pageable pageable);
+		    SELECT f.chatGroup
+		    FROM Favorite f
+		    WHERE f.user.id = :userId
+		    ORDER BY (
+		        SELECT MAX(m.createdAt)
+		        FROM Message m
+		        WHERE m.chatGroup.id = f.chatGroup.id
+		    ) DESC
+		    """)
+		List<ChatGroup> findRecentFavoriteGroups(@Param("userId") Long userId, Pageable pageable);
+	
+	
 }

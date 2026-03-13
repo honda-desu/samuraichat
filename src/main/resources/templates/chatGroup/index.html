@@ -39,6 +39,9 @@
 									<td>
 										<a th:href="@{/groups/{groupId}/messages(groupId=${chatGroup.id})}"
 											th:text="${chatGroup.name}"></a>
+										<!-- ★ ここを修正 -->
+										<span th:if="${chatGroup.unreadCount > 0}" class="badge bg-danger">!</span>
+										
 									</td>
 								</tr>
 							</tbody>

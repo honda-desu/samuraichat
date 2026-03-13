@@ -1,15 +1,16 @@
+DROP TABLE IF EXISTS group_message_reads;
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS chat_group_members;
+DROP TABLE IF EXISTS favorites;
 DROP TABLE IF EXISTS dm_message;
 DROP TABLE IF EXISTS dm_room;
-
-DROP TABLE IF EXISTS favorites;
-DROP TABLE IF EXISTS chat_group_members;
-DROP TABLE IF EXISTS messages;
-
+DROP TABLE IF EXISTS blocks;
+DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS verification_tokens;
-
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS chat_groups;
 DROP TABLE IF EXISTS roles;
+
 
 CREATE TABLE IF NOT EXISTS roles (
    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -17,7 +18,7 @@ CREATE TABLE IF NOT EXISTS roles (
 );
 
 CREATE TABLE IF NOT EXISTS chat_groups (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
@@ -46,9 +47,9 @@ CREATE TABLE IF NOT EXISTS verification_tokens (
 );
 
 CREATE TABLE IF NOT EXISTS messages (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    chat_group_id INT NOT NULL,
+    chat_group_id BIGINT NOT NULL,
     content TEXT,
     image_path VARCHAR(255),
     message_type VARCHAR(10) NOT NULL DEFAULT 'TEXT',
@@ -60,7 +61,7 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE TABLE IF NOT EXISTS chat_group_members (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    chat_group_id INT NOT NULL,
+    chat_group_id BIGINT NOT NULL,
     user_id INT NOT NULL,
     joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_members_chat_group FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id) ON DELETE CASCADE,
@@ -71,7 +72,7 @@ CREATE TABLE IF NOT EXISTS chat_group_members (
 CREATE TABLE IF NOT EXISTS favorites (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    chat_group_id INT NOT NULL,
+    chat_group_id BIGINT NOT NULL,
     favorited_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_favorites_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_favorites_chat_group FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id) ON DELETE CASCADE,
@@ -130,3 +131,16 @@ CREATE TABLE IF NOT EXISTS reports (
     CONSTRAINT fk_reports_reporter FOREIGN KEY (reporter_id) REFERENCES users(id),
     CONSTRAINT fk_reports_target FOREIGN KEY (target_user_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS group_message_reads (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    message_id BIGINT NOT NULL,
+    user_id INT NOT NULL,
+    read_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_group_read_message FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+    CONSTRAINT fk_group_read_user FOREIGN KEY (user_id) REFERENCES users(id),
+
+    UNIQUE(message_id, user_id)
+);
+
