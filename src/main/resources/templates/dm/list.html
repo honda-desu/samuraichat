@@ -38,6 +38,13 @@
 										<a th:href="@{/dm/chat/{roomId}(roomId=${room.id})}"
 											th:text="${room.user1.id == session.userId ? room.user2.name : room.user1.name}">
 										</a>
+
+										<!-- ★ 未読がある場合は「!」を表示 -->
+										<span th:if="${room.unreadCount > 0}" class="badge bg-danger"
+											style="margin-left: 6px;">
+											!
+										</span>
+
 									</td>
 
 									<!-- 最終メッセージ（なければ空欄） -->

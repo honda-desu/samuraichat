@@ -133,7 +133,17 @@ public class DmService {
     public List<DmRoom> getRecentRoomsForUser(Long userId, int limit) {
         return dmRoomRepository.findRecentRooms(userId, PageRequest.of(0, limit));
     }
+    
+ // ★★★★★ ここから未読管理の追加部分 ★★★★★
 
+    // ★ DM画面を開いたときに相手のメッセージを既読にする
+    public void markMessagesAsRead(Long roomId, Long myId) {
+        dmMessageRepository.markAsRead(roomId, myId);
+    }
 
+    // ★ DM一覧で未読数を取得する
+    public int getUnreadCount(Long roomId, Long myId) {
+        return dmMessageRepository.countUnread(roomId, myId);
+    }
 
 }

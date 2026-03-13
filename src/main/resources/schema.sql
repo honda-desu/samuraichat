@@ -103,7 +103,6 @@ ALTER TABLE dm_message
 
 ALTER TABLE dm_message
     ADD CONSTRAINT fk_dmmessage_sender FOREIGN KEY (sender_id) REFERENCES users(id);
-);
 
 ALTER TABLE dm_message
     ADD COLUMN is_read BOOLEAN NOT NULL DEFAULT FALSE;

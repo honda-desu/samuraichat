@@ -65,6 +65,10 @@ public class DmController {
     public String chat(@PathVariable Long roomId, @AuthenticationPrincipal Object principal, Model model) {
     	
     	User me = extractUser(principal);
+    	Long myId = me.getId();
+    	
+    	// ★ 相手のメッセージを既読にする（未読管理の最重要ポイント）
+        dmService.markMessagesAsRead(roomId, myId);
 
         model.addAttribute("roomId", roomId);
         model.addAttribute("messages", dmService.getMessages(roomId));
@@ -130,6 +134,11 @@ public class DmController {
 
             // DmRoom の transient フィールドにセット
             room.setBlocked(isBlocked);
+            
+         // ★ 未読数をセット（これが「!」表示の元になる）
+            int unread = dmService.getUnreadCount(room.getId(), myId);
+            room.setUnreadCount(unread);
+
         }
 
         // ★ Thymeleaf に渡す

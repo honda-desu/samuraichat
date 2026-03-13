@@ -45,5 +45,10 @@ public class DmRoom {
 	// ★ 追加：ブロック状態（DBには保存しない）
     @Transient
     private boolean blocked;
+    
+ // ★ 追加：未読メッセージ数（DBには保存しない）
+    @Transient
+    private int unreadCount;
+
 
 }

@@ -41,5 +41,8 @@ public class DmMessage {
 	
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Timestamp createdAt;
+	
+	@Column(name = "is_read")
+	private boolean isRead;
 
 }
