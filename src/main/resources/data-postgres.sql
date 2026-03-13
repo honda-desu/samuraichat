@@ -168,3 +168,23 @@ INSERT INTO favorites (id, user_id, chat_group_id, favorited_at) VALUES
 (19, 7, 19, '2025-08-01 11:30:00'),
 (20, 8, 20, '2025-08-01 11:35:00')
 ON CONFLICT DO NOTHING;
+
+INSERT INTO dm_room (id, user1_id, user2_id, created_at) VALUES
+(1, 1, 2, '2025-08-01 09:00:00')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO dm_message (id, room_id, sender_id, content, image_path, created_at, is_read) VALUES
+(1, 1, 1, 'よろしくお願いします！', NULL, '2025-08-01 09:05:00', false)
+ON CONFLICT DO NOTHING;
+
+INSERT INTO blocks (id, blocker_id, blocked_user_id, created_at) VALUES
+(1, 3, 4, '2025-08-01 09:10:00')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO reports (id, reporter_id, target_user_id, reason, status, created_at) VALUES
+(1, 5, 6, '不適切な発言', 'PENDING', '2025-08-01 09:15:00')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO group_message_reads (id, message_id, user_id, read_at) VALUES
+(1, 1, 2, '2025-08-24 09:20:00')
+ON CONFLICT DO NOTHING;
