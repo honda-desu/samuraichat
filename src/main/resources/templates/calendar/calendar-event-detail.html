@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>予定の詳細 | SAMURAI Chat</title>
+</head>
+
+<body>
+	<div class="samuraichat-wrapper">
+
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container-fluid pt-4 pb-5 samuraichat-container">
+
+				<h2 class="mb-4">予定の詳細</h2>
+
+				<div class="card p-3">
+
+					<h4 th:text="${event.summary}"></h4>
+
+					<p><strong>開始:</strong>
+						<span
+							th:text="${event.start.dateTime != null ? event.start.dateTime : event.start.date}"></span>
+					</p>
+
+					<p><strong>終了:</strong>
+						<span th:text="${event.end.dateTime != null ? event.end.dateTime : event.end.date}"></span>
+					</p>
+
+					<p><strong>説明:</strong></p>
+					<p th:text="${event.description}"></p>
+
+					<a th:href="@{/calendar/event/edit(id=${event.id})}" class="btn btn-warning mt-3">
+						編集する
+					</a>
+
+					<a href="/calendar" class="btn btn-secondary mt-3">カレンダーに戻る</a>
+					<form th:action="@{/calendar/event/delete}" method="post" class="mt-3">
+						<input type="hidden" name="id" th:value="${event.id}">
+						<button type="submit" class="btn btn-danger" onclick="return confirm('本当に削除しますか？');">
+							予定を削除する
+						</button>
+					</form>
+
+
+
+				</div>
+
+			</div>
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>今日の予定</title>
+</head>
+<body>
+<div class="samuraichat-wrapper">
+
+    <div th:replace="~{fragment :: header}"></div>
+
+    <main>
+        <div class="container-fluid pt-4 pb-5 samuraichat-container">
+
+            <h2>今日の予定</h2>
+
+            <ul th:if="${events}">
+                <li th:each="event : ${events}">
+                    <strong th:text="${event.summary}"></strong>
+                    <span th:text="${event.start.dateTime}"></span>
+                </li>
+            </ul>
+
+            <p th:if="${events == null or #lists.isEmpty(events)}">
+                今日の予定はありません。
+            </p>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragment :: footer}"></div>
+</div>
+
+<div th:replace="~{fragment :: scripts}"></div>
+</body>
+</html>

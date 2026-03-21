@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <title>ブロック理由</title>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+</head>
+
+<body>
+<div class="container pt-4 pb-5">
+
+    <h2 th:text="'『' + ${target.name} + '』をブロックしますか？'"></h2>
+
+    <form th:action="@{'/block/' + ${targetId}}" method="post">
+
+        <label class="mt-3">通報理由（任意）</label>
+        <textarea name="reason" class="form-control" rows="4"
+                  placeholder="例：迷惑行為があったため など"></textarea>
+
+        <button type="submit" class="btn btn-danger mt-3">ブロックする</button>
+        <a th:href="@{'/dm/chat/' + ${roomId}}" class="btn btn-secondary mt-3">キャンセル</a>
+    </form>
+
+</div>
+</body>
+</html>

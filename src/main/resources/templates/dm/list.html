@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>DM一覧</title>
+</head>
+
+<body>
+	<div class="samuraichat-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container pt-4 pb-5 samuraichat-container">
+				<div class="row justify-content-center">
+					<div class="col-xxl-9 col-xl-10 col-lg-11">
+
+						<h1 class="mb-4 text-center">DM一覧</h1>
+
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col">ルームID</th>
+									<th scope="col">相手ユーザー</th>
+									<th scope="col">最終メッセージ</th>
+									<th scope="col"></th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr th:each="room : ${rooms}">
+									<!-- ルームID -->
+									<td th:text="${room.id}"></td>
+
+									<!-- 相手ユーザー名 -->
+									<td>
+										<a th:href="@{/dm/chat/{roomId}(roomId=${room.id})}"
+											th:text="${room.user1.id == session.userId ? room.user2.name : room.user1.name}">
+										</a>
+
+										<!-- ★ 未読がある場合は「!」を表示 -->
+										<span th:if="${room.unreadCount > 0}" class="badge bg-danger"
+											style="margin-left: 6px;">
+											!
+										</span>
+
+									</td>
+
+									<!-- 最終メッセージ（なければ空欄） -->
+									<td
+										th:text="${#lists.isEmpty(room.messages) ? '' : room.messages.get(room.messages.size() - 1).content}">
+									</td>
+
+									<td>
+										<!-- 自分自身ではない場合 -->
+										<div
+											th:if="${(room.user1.id == session.userId ? room.user2.id : room.user1.id) != session.userId}">
+
+											<!-- ブロックしていない場合 -->
+											<a th:if="${!room.blocked}" th:href="@{'/block/' +
+           (${room.user1.id == session.userId ? room.user2.id : room.user1.id})
+           + '/reason?roomId=' + ${room.id}}" class="btn btn-outline-danger btn-sm" style="margin-left: 10px;">
+												ブロック
+											</a>
+
+											<!-- ブロックしている場合 -->
+											<a th:if="${room.blocked}" th:href="@{'/block/' +
+           (${room.user1.id == session.userId ? room.user2.id : room.user1.id})
+           + '/unblock?roomId=' + ${room.id}}" class="btn btn-outline-secondary btn-sm" style="margin-left: 10px;">
+												ブロック解除
+											</a>
+
+										</div>
+									</td>
+
+								</tr>
+							</tbody>
+						</table>
+
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

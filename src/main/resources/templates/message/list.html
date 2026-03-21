@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>Samurai Chat</title>
+</head>
+<!-- ★ プロフィール表示モーダル ★ -->
+<div id="profileModal" class="modal-overlay" style="display:none;">
+	<div class="modal-content">
+		<span class="close-btn" onclick="closeProfileModal()">&times;</span>
+
+		<img id="modalProfileImage" class="modal-icon">
+		<h2 id="modalUserName"></h2>
+		<p id="modalUserText"></p>
+
+		<!-- ★ DMボタン（JSで動的にリンクを入れる） ★ -->
+		<a id="modalDmButton" class="btn btn-outline-primary mt-3">メッセージを送る</a>
+
+	</div>
+</div>
+
+<!-- ★ JavaScript ★ -->
+<script src="/js/chat.js"></script>
+
+<body>
+	<!-- メッセージ履歴表示 -->
+	<div class="samuraichat-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container">
+				<div class="samuraichat-container">
+					<div class="chat-header text-center mb-3">
+						<h3 th:text="${chatGroup.name}"></h3>
+					</div>
+
+
+					<div class="chat-container">
+						<div th:each="msg : ${messages}" class="message">
+
+							<!-- プロフィール画像あり -->
+							<img th:if="${msg.user != null and msg.user.profileImage != null}"
+								th:src="@{'/uploads/' + ${msg.user.profileImage}}" class="chat-icon"
+								th:data-name="${msg.user.name}" th:data-text="${msg.user.profileText}"
+								th:data-image="@{'/uploads/' + ${msg.user.profileImage}}"
+								th:data-user-id="${msg.user.id}" onclick="openProfileModal(this)">
+
+
+
+							<!-- プロフィール画像なし -->
+							<img th:if="${msg.user != null and msg.user.profileImage == null}"
+								th:src="@{/images/noimage.png}" class="chat-icon" th:data-name="${msg.user.name}"
+								th:data-text="${msg.user.profileText}" th:data-image="@{/images/noimage.png}"
+								th:data-user-id="${msg.user.id}" onclick="openProfileModal(this)">
+
+
+							<div>
+								<strong th:text="${msg.user != null ? msg.user.name : '匿名'}">ユーザー名</strong>
+							</div>
+
+							<div th:if="${msg.messageType.name() == 'TEXT'}" th:text="${msg.content}">メッセージ内容</div>
+
+							<div th:if="${msg.messageType.name() == 'IMAGE'}">
+								<img th:src="@{${msg.imagePath}}" alt="画像メッセージ"
+									style="max-width: 300px; border-radius: 8px;" />
+							</div>
+
+							<div class="meta" th:text="${#dates.format(msg.createdAt, 'yyyy-MM-dd HH:mm')}">送信日時</div>
+						</div>
+					</div>
+					<div class="fixed-bottom-panel ">
+						<!-- メッセージ入力フォーム -->
+						<form class="input-form" th:action="@{/groups/{groupId}/messages/send(groupId=${groupId})}"
+							method="post">
+							<input type="text" name="content" placeholder="メッセージを入力..." required />
+							<button type="submit">送信</button>
+						</form>
+
+						<!-- 画像投稿フォーム -->
+						<form class="image-upload-form"
+							th:action="@{/groups/{groupId}/images/upload(groupId=${groupId})}" method="post"
+							enctype="multipart/form-data">
+							<input type="file" name="imageFile" accept="image/*" required />
+							<button type="submit" class="btn btn-outline-success">画像を投稿</button>
+						</form>
+
+						<form class="favorite" th:unless="${isFavorite}"
+							th:action="@{/groups/{groupId}/favorites/create(groupId=${groupId})}" method="post">
+							<div class="favorite-header">
+								<div th:text="'グループ名：' + ${chatGroup.name}">グループ名</div>
+								<button type="submit" class="btn btn-outline-primary">お気に入り登録</button>
+							</div>
+						</form>
+						<form class="favorite" th:if="${isFavorite}" th:action="@{/favorites/__${favorite.id}__/delete}"
+							method="post">
+							<div class="favorite-header">
+								<div th:text="'グループ名：' + ${chatGroup.name}">グループ名</div>
+								<button type="submit" class="btn btn-outline-primary">お気に入り解除</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</main>
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+	<script>
+		window.addEventListener('load', function () {
+			const chatContainer = document.querySelector('.chat-container');
+			if (chatContainer) {
+				chatContainer.scrollTop = chatContainer.scrollHeight;
+			}
+		});
+	</script>
+	<div th:replace="~{fragment :: scripts}"></div>
+
+
+</body>
+
+</html>

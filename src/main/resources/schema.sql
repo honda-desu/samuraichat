@@ -1,0 +1,146 @@
+DROP TABLE IF EXISTS group_message_reads;
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS chat_group_members;
+DROP TABLE IF EXISTS favorites;
+DROP TABLE IF EXISTS dm_message;
+DROP TABLE IF EXISTS dm_room;
+DROP TABLE IF EXISTS blocks;
+DROP TABLE IF EXISTS reports;
+DROP TABLE IF EXISTS verification_tokens;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS chat_groups;
+DROP TABLE IF EXISTS roles;
+
+
+CREATE TABLE IF NOT EXISTS roles (
+   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS chat_groups (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    furigana VARCHAR(50) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role_id INT NOT NULL,
+    enabled BOOLEAN NOT NULL,
+    profile_image VARCHAR(255),      -- ★追加
+    profile_text TEXT,               -- ★追加
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles (id)
+);
+
+CREATE TABLE IF NOT EXISTS verification_tokens (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    token VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_verification_user FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    chat_group_id BIGINT NOT NULL,
+    content TEXT,
+    image_path VARCHAR(255),
+    message_type VARCHAR(10) NOT NULL DEFAULT 'TEXT',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_messages_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_messages_chat_group FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id) ON DELETE CASCADE
+
+);
+
+CREATE TABLE IF NOT EXISTS chat_group_members (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    chat_group_id BIGINT NOT NULL,
+    user_id INT NOT NULL,
+    joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_members_chat_group FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id) ON DELETE CASCADE,
+    CONSTRAINT fk_members_user FOREIGN KEY (user_id) REFERENCES users(id),
+    UNIQUE(chat_group_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS favorites (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    chat_group_id BIGINT NOT NULL,
+    favorited_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_favorites_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_favorites_chat_group FOREIGN KEY (chat_group_id) REFERENCES chat_groups(id) ON DELETE CASCADE,
+    UNIQUE(user_id, chat_group_id)
+);
+
+CREATE TABLE IF NOT EXISTS dm_room (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user1_id INT NOT NULL,
+    user2_id INT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_dmroom_user1 FOREIGN KEY (user1_id) REFERENCES users(id),
+    CONSTRAINT fk_dmroom_user2 FOREIGN KEY (user2_id) REFERENCES users(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS dm_message (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    room_id BIGINT NOT NULL,
+    sender_id BIGINT NOT NULL,
+    content TEXT,
+    image_path VARCHAR(255),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE dm_message
+    ADD CONSTRAINT fk_dmmessage_room FOREIGN KEY (room_id) REFERENCES dm_room(id);
+
+ALTER TABLE dm_message
+    ADD CONSTRAINT fk_dmmessage_sender FOREIGN KEY (sender_id) REFERENCES users(id);
+
+ALTER TABLE dm_message
+    ADD COLUMN is_read BOOLEAN NOT NULL DEFAULT FALSE;
+
+CREATE TABLE IF NOT EXISTS blocks (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    blocker_id INT NOT NULL,
+    blocked_user_id INT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_blocks_blocker FOREIGN KEY (blocker_id) REFERENCES users(id),
+    CONSTRAINT fk_blocks_blocked FOREIGN KEY (blocked_user_id) REFERENCES users(id),
+
+    UNIQUE(blocker_id, blocked_user_id)
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    reporter_id INT NOT NULL,
+    target_user_id INT NOT NULL,
+    reason VARCHAR(255) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_reports_reporter FOREIGN KEY (reporter_id) REFERENCES users(id),
+    CONSTRAINT fk_reports_target FOREIGN KEY (target_user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS group_message_reads (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    message_id BIGINT NOT NULL,
+    user_id INT NOT NULL,
+    read_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_group_read_message FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+    CONSTRAINT fk_group_read_user FOREIGN KEY (user_id) REFERENCES users(id),
+
+    UNIQUE(message_id, user_id)
+);
+
